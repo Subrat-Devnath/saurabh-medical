@@ -1,0 +1,44 @@
+server:
+  port: 8081
+
+spring:
+  servlet:
+    context-path: /user-mgmt
+    
+  application:
+    name: user-mgmt
+
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/microservice  
+    #(for point mysql in host machine (laptop) host.docker.internal)
+    #url: jdbc:mysql://host.docker.internal:3307/microservice
+    username: root
+    password: root
+    
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    
+eureka:
+  client:
+    register-with-eureka: true       # restister to eureka
+    fetch-registry: true    
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ 
+      #defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}   
+      
+##--------- fien properties ---------
+
+user:
+  contextPath: "/user"
+  url: "http://user-mgmt:8081" 
+
+product:
+  contextPath: "/product"
+  url: "http://product-mgmt:8082"    
+              
+
+  
