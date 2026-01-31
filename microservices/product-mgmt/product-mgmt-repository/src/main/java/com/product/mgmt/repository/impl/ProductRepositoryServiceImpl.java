@@ -1,9 +1,12 @@
 package com.product.mgmt.repository.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.common.service.configuration.ObjectBuilderUtils;
 import com.product.mgmt.repository.ProductRepository;
@@ -19,10 +22,20 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 	private ProductDao productDao;
 
 	@Override
+	public void addProduct(ProductDto productDto) {
+		ProductEntity entity = ObjectBuilderUtils.buildDtoToEntity(productDto, ProductEntity.class);
+		ProductEntityId productEntityId = new ProductEntityId();
+		productEntityId.setProductName(productDto.getProductName().toUpperCase());
+		entity.setProductEntityId(productEntityId);
+		System.out.println("Product for save: " + entity);
+		productDao.save(entity);
+	}
+
+	@Override
 	public ProductDto getProduct(String productName) {
 
 		ProductEntityId id = new ProductEntityId();
-		id.setProductName(productName);
+		id.setProductName(productName.toUpperCase());
 
 		Optional<ProductEntity> entityOpt = productDao.findById(id);
 
@@ -34,20 +47,23 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 	}
 
 	@Override
-	public void addProduct(ProductDto productDto) {
-		ProductEntity entity = ObjectBuilderUtils.buildDtoToEntity(productDto, ProductEntity.class);
-		ProductEntityId productEntityId = new ProductEntityId();
-		productEntityId.setProductName(productDto.getProductName());
-		entity.setProductEntityId(productEntityId);
-		System.out.println("Product for save: " + entity);
-		productDao.save(entity);
+	public void deleteProduct(String productName) {
+		ProductEntityId id = new ProductEntityId();
+		id.setProductName(productName.toUpperCase());
+		productDao.deleteById(id);
 	}
 
 	@Override
-	public void deleteProduct(String productName) {
-		ProductEntityId id = new ProductEntityId();
-		id.setProductName(productName);
-		productDao.deleteById(id);
+	public List<ProductDto> getAllProducts() {
+
+		List<ProductEntity> allProducts = productDao.findAll();
+
+		if (CollectionUtils.isEmpty(allProducts)) {
+			return null;
+		}
+
+		return allProducts.stream().map(entity -> ObjectBuilderUtils.buildEntityToDto(entity, ProductDto.class))
+				.collect(Collectors.toList());
 	}
 
 }

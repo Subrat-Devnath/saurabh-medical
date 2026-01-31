@@ -6,6 +6,9 @@ services=("api-gateway" "service-registry" "user-mgmt" "product-mgmt")
 
 #services=''
 
+  ## remove image
+  docker rmi frontend
+  docker build -t frontend .
 
 serviceCount=0
 

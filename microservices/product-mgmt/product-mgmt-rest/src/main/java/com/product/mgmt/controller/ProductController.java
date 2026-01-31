@@ -1,5 +1,7 @@
 package com.product.mgmt.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,11 @@ public class ProductController {
 	@GetMapping(path = "/{productName}")
 	public void deleteProduct(@PathVariable(name = "productName") String productName) {
 		productService.deleteProduct(productName);
+	}
+
+	@GetMapping(path = "/products")
+	public List<ProductDto> getAllProducts() {
+		return productService.getAllProducts();
 	}
 
 }

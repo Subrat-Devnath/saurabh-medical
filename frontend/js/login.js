@@ -11,7 +11,7 @@ function login() {
         return;
     }
 
-    fetch("http://127.0.0.1:8081/user-mgmt/api/v1/login", {
+    fetch("/api/user-mgmt/api/v1/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -26,7 +26,7 @@ function login() {
 
         if (data.success) {
             // ✅ Redirect to home page
-            window.location.href = "../html/home.html";
+            window.location.href = "/home.html";
         } else {
             // ❌ Show error message
             errorMsg.innerText = data.message || "Invalid email or password";
@@ -39,3 +39,9 @@ function login() {
         errorMsg.style.display = "block";
     });
 }
+
+
+function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/index.html";
+    }

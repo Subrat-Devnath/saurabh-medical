@@ -12,12 +12,11 @@ spring:
           uri: lb://user-mgmt
           predicates:
             - Path=/user-mgmt/api/v1/**
-            
-        - id: product
-          uri: lb://product
+                        
+        - id: product-mgmt
+          uri: lb://product-mgmt
           predicates:
-            - Path=/product/api/v1/**
-            
+            - Path=/product-mgmt/api/v1/**      
             
 eureka:
   client:

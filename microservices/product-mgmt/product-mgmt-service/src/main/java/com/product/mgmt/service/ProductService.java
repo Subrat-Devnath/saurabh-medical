@@ -1,5 +1,7 @@
 package com.product.mgmt.service;
 
+import java.util.List;
+
 import com.product.mgmt.repository.dto.ProductDto;
 
 public interface ProductService {
@@ -9,5 +11,7 @@ public interface ProductService {
 	ProductDto getProduct(String productName);
 
 	void deleteProduct(String productName);
+
+	List<ProductDto> getAllProducts();
 
 }

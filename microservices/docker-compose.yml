@@ -121,6 +121,16 @@ services:
     networks:
       - microservices-net
 
+  frontend:
+    build: ../frontend
+    container_name: frontend-container
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - microservices-net
+
 volumes:
   mysql_data:
   cassandra_data:

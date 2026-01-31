@@ -4,16 +4,23 @@
 set -e
 set -o pipefail
 
-echo "Building services..."
+# -------- Colors --------
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}🔨 Building services...${NC}"
 bash build-services.sh
 
-echo "Stopping all running containers..."
+echo -e "${YELLOW}🛑 Stopping all running containers...${NC}"
 bash stop-containers.sh
 
-echo "Deleting Docker images..."
+echo -e "${RED}🧹 Deleting Docker images...${NC}"
 bash delete-images.sh
 
-echo "Starting all containers..."
+echo -e "${BLUE}🚀 Starting all containers...${NC}"
 docker compose -f docker-compose.yml up -d
 
-echo "✅ All steps completed successfully."
+echo -e "${GREEN}✅ All steps completed successfully.${NC}"

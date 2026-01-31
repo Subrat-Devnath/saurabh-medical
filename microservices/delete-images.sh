@@ -1,6 +1,6 @@
 #!/bin/bash
 
-services=("microservices-api-gateway" "microservices-service-registry" "microservices-user-mgmt" "microservices-product-mgmt")
+services=("microservices-api-gateway" "microservices-service-registry" "microservices-user-mgmt" "microservices-product-mgmt" "microservices-frontend" )
 
 for service in "${services[@]}"; do
   echo "🚀 Deleting Docker image: $service"
