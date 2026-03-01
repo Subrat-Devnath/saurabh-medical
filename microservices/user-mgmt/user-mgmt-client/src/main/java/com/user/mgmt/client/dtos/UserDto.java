@@ -31,7 +31,7 @@ public class UserDto implements Serializable {
 
     private Long lastLoginDate = System.currentTimeMillis();
 
-    private OrganizationDTO organizationDTO;
+    private OrganizationDTO organization;
 
     private Set<RolesDTO> roles;
 

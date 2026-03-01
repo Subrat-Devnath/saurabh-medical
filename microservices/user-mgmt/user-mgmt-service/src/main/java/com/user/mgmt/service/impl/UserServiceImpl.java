@@ -106,12 +106,20 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
-        UserEntity userByUserName = userRepository.getUserByUserName(userName);
+        UserEntity userEntity = userRepository.getUserByUserName(userName);
 
-        if (userByUserName == null) {
+        if (userEntity == null) {
             return null;
         }
-        return ObjectBuilder.buildDtoFromEntity(userByUserName, null, UserDto.class);
+
+        OrganizationEntity organizationEntity =
+                organizationRepository.getOrganizationByName(
+                        userEntity.getEmailId().split("@")[1]
+                );
+
+        userEntity.setOrganization(organizationEntity);
+
+        return ObjectBuilder.buildDtoFromEntity(userEntity, null, UserDto.class);
     }
 
     @Override

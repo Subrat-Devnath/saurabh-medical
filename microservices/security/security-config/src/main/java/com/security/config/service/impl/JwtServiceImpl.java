@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
@@ -80,9 +79,9 @@ public class JwtServiceImpl implements JwtService {
         }
 
 
-        if (userDto.getOrganizationDTO() != null) {
-            keyAndValue.put("profile", userDto.getOrganizationDTO().getOrgProfile());
-            keyAndValue.put("orgId", userDto.getOrganizationDTO().getId());
+        if (userDto.getOrganization() != null) {
+            keyAndValue.put("profile", userDto.getOrganization().getOrgProfile());
+            keyAndValue.put("orgId", userDto.getOrganization().getId());
         }
         return keyAndValue;
     }
