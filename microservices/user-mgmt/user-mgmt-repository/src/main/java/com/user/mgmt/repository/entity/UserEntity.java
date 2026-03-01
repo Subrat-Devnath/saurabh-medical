@@ -1,50 +1,57 @@
 package com.user.mgmt.repository.entity;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "user")
-public class UserEntity implements Serializable {
+public class UserEntity extends RootOrgContained implements Serializable {
 
-	private static final long serialVersionUID = -5649645038689214691L;
+    private static final long serialVersionUID = -5649645038689214691L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
+    @Column(name = "id", nullable = false)
+    private String id;
 
-	@Column(name = "name", nullable = false)
-	private String name;
+    //Must be email id
+    @Column(name = "name", nullable = false)
+    private String name;
 
-	@Column(name = "email", nullable = false, unique = true)
-	private String email;
+    //Must be email id
+    @Column(name = "email_id", nullable = false, unique = true)
+    private String emailId;
 
-	@Column(name = "city")
-	private String city;
+    @Column(name = "city")
+    private String city;
 
-	@Column(name = "country")
-	private String country;
+    @Column(name = "country")
+    private String country;
 
-	@Column(name = "password", nullable = false)
-	private String password;
+    @Column(name = "password")
+    private String password;
 
-	@Column(name = "is_active")
-	private Boolean isActive;
+    @Column(name = "password_secret")
+    private String passwordSecret;
 
-	@Column(name = "retry_count")
-	private int retryCount;
+    @Column(name = "is_active")
+    private boolean isActive;
 
-	@Column(name = "last_login_date")
-	private LocalDateTime lastLoginDate;
+    @Column(name = "retry_count")
+    private int retryCount;
+
+    @Column(name = "last_login_date")
+    private Long lastLoginDate;
+
+    @ManyToMany(fetch = FetchType.EAGER)// Jab user fetch karenge usi time role bhi ana chahiye
+    @JoinTable(name = "user_roles", joinColumns =
+    @JoinColumn(name = "user_id"), inverseJoinColumns =
+    @JoinColumn(name = "role_id"))
+    private Set<RolesEntity> roles;
 }

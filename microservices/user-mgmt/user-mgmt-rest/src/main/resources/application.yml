@@ -1,23 +1,28 @@
 server:
   port: 8081
-
-spring:
   servlet:
     context-path: /user-mgmt
+ 
+app:
+  master-salt: cc0b465e-c9a7-11ed-afa1-0242ac120002
     
+spring:
   application:
     name: user-mgmt
 
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/microservice  
+    #(For local laptop)
+    #url: jdbc:mysql://localhost:3307/microservice
+    #username: root
+    #password: root
     #(for point mysql in host machine (laptop) host.docker.internal)
     #url: jdbc:mysql://host.docker.internal:3307/microservice
-    username: root
-    password: root
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
     
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate.ddl-auto: update
     generate-ddl: true
     show-sql: true
@@ -33,12 +38,20 @@ eureka:
 ##--------- fien properties ---------
 
 user:
-  contextPath: "/user"
-  url: "http://user-mgmt:8081" 
+  contextPath: "/user-mgmt"
+  url: "http://127.0.0.1:8081"
 
 product:
-  contextPath: "/product"
-  url: "http://product-mgmt:8082"    
-              
+  contextPath: "/product-mgmt"
+  url: "http://127.0.0.1:8082"
 
-  
+security:
+  contextPath: "/security"
+  url: "http://127.0.0.1:8084"
+
+  ## ----------- SECURITY PROPERTIES -------
+  jwt:
+    secret: bXlTdXBlclNlY3VyZUhTNTEyS2V5VGhhdElzQXRMZWFzdDY0Qnl0ZXNMb25nRm9yU2VjdXJlSldUVG9rZW5TaWduaW5nMTIzNDU2
+    access-ttl-seconds: 36000
+    refresh-ttl-seconds: 86400
+    issuer: saurabh.com

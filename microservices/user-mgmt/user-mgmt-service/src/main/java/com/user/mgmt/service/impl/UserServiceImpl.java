@@ -1,65 +1,138 @@
 package com.user.mgmt.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
+import java.security.NoSuchAlgorithmException;
+import java.util.Set;
+import java.util.UUID;
 
-import com.common.service.configuration.ObjectBuilderUtils;
-import com.common.service.dtos.ResponseDTO;
+import com.user.mgmt.client.dtos.RoleType;
+import com.user.mgmt.repository.OrganizationRepository;
+import com.user.mgmt.repository.RolesRepository;
+import com.user.mgmt.repository.entity.OrganizationEntity;
+import com.user.mgmt.repository.entity.RolesEntity;
+import com.user.mgmt.repository.enums.OrgProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import com.common.service.configuration.ObjectBuilder;
+import com.common.service.dtos.LoginRequest;
+import com.user.mgmt.client.dtos.UserDto;
 import com.user.mgmt.repository.UserRepository;
-import com.user.mgmt.repository.dto.UserDto;
 import com.user.mgmt.repository.entity.UserEntity;
 import com.user.mgmt.service.UserService;
+import com.user.mgmt.service.utils.PasswordEncryptor;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private RolesRepository rolesRepository;
 
-	@Override
-	public UserDto getUserById(Long id) {
-		return userRepository.getUserById(id);
-	}
+    @Autowired
+    private OrganizationRepository organizationRepository;
 
-	@Override
-	public void addUser(UserDto userDto) {
-		userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-		UserEntity userEntity = ObjectBuilderUtils.buildDtoToEntity(userDto, UserEntity.class);
-		userRepository.addUser(userEntity);
-	}
+    @Autowired
+    private PasswordEncryptor passwordEncryptor;
 
-	@Override
-	public ResponseDTO updateUser(String emailId, String password) {
-		UserDto userByEmail = userRepository.getUserByEmail(emailId.trim());
+    @Override
+    public void addUser(UserDto userDto) {
 
-		if (userByEmail == null) {
-			return new ResponseDTO(false, null, "User not Found");
-		}
+        try {
+            String userSalt = UUID.randomUUID().toString();
+            userDto.setPasswordSecret(userSalt);
 
-		boolean updated = userRepository.updatePassword(emailId, password);
-		return new ResponseDTO(updated, null, null);
-	}
+            String encryptedPassword = passwordEncryptor.encrypt(userDto.getPassword(), userSalt);
+            userDto.setPassword(encryptedPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	@Override
-	public ResponseDTO login(String emailId, String password) {
+        UserEntity userEntity = ObjectBuilder.buildDtoFromEntity(userDto, null, UserEntity.class);
 
-		UserDto userByEmail = userRepository.getUserByEmail(emailId);
+        RolesEntity rolesEntity = rolesRepository
+                .getRoleByName(RoleType.ROLE_USER.name());
 
-		if (userByEmail == null) {
-			return new ResponseDTO(false, null, "User not found");
+        if (rolesEntity == null) {
+            return;
+        }
 
-		}
+        userEntity.setRoles(Set.of(rolesEntity));
 
-		// THIS IS THE CORRECT WAY
-		boolean matches = passwordEncoder.matches(password, userByEmail.getPassword());
+        OrganizationEntity organizationEntity =
+                organizationRepository.getOrganizationByName(
+                        userEntity.getEmailId().split("@")[1]
+                );
 
-		if (matches) {
-			return new ResponseDTO(true, null, null);
-		}
+        if (organizationEntity != null) {
 
-		return new ResponseDTO(false, null, "Invalid email or password");
-	}
+            userEntity.setOrganization(organizationEntity);
+            userRepository.addUser(userEntity);
+            return;
+        }
+
+        OrganizationEntity newOrganizationEntity = new OrganizationEntity();
+        newOrganizationEntity.setId(UUID.randomUUID().toString());
+        newOrganizationEntity.setName(userEntity.getEmailId().split("@")[1]);
+        newOrganizationEntity.setCity(userEntity.getCity());
+        newOrganizationEntity.setDeleted(false);
+        newOrganizationEntity.setEnabled(true);
+        newOrganizationEntity.setOrgProfile(OrgProfile.RESELLER);
+        newOrganizationEntity.setTestOrg(false);
+
+        organizationRepository.insertOrganization(newOrganizationEntity);
+
+        userEntity.setOrganization(newOrganizationEntity);
+
+        userRepository.addUser(userEntity);
+
+    }
+
+    @Override
+    public UserDto getUserById(String id) {
+        UserEntity userById = userRepository.getUserById(id);
+        if (userById == null) {
+            return null;
+        }
+        return ObjectBuilder.buildDtoFromEntity(userById, null, UserDto.class);
+    }
+
+    @Override
+    public UserDto getUserByUserName(String userName) {
+
+        if (StringUtils.isEmpty(userName)) {
+            return null;
+        }
+
+        UserEntity userByUserName = userRepository.getUserByUserName(userName);
+
+        if (userByUserName == null) {
+            return null;
+        }
+        return ObjectBuilder.buildDtoFromEntity(userByUserName, null, UserDto.class);
+    }
+
+    @Override
+    public UserDto validateUserAndGet(LoginRequest loginRequest) {
+        UserDto userByUserName = getUserByUserName(loginRequest.getUserName());
+
+        if (userByUserName == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        try {
+            String encrypt = passwordEncryptor.encrypt(loginRequest.getPassword(), userByUserName.getPasswordSecret());
+
+            if (userByUserName.getPassword().equals(encrypt)) {
+                return userByUserName;
+            }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }

@@ -7,39 +7,38 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.common.service.dtos.ResponseDTO;
-import com.user.mgmt.repository.dto.LoginRequest;
-import com.user.mgmt.repository.dto.UserDto;
+import com.common.service.dtos.LoginRequest;
+import com.user.mgmt.client.dtos.UserDto;
 import com.user.mgmt.service.UserService;
 
 @RestController
-@RequestMapping(path = "/api/v1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/user/{id}")
-	public UserDto getUserById(@PathVariable Long id) {
-		return userService.getUserById(id);
-	}
-
-	@PostMapping("/user")
+	@PostMapping(value = "/register-normal-user")
 	public boolean addUser(@RequestBody UserDto userDto) {
 		userService.addUser(userDto);
 		return true;
 	}
 
-	@PostMapping("/login")
-	public ResponseDTO login(@RequestBody LoginRequest loginRequest) {
-		return userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+	@GetMapping(value = "/user/{id}")
+	public UserDto getUserById(@PathVariable String id) {
+		return userService.getUserById(id);
 	}
 
-	@PostMapping("/user-details-update")
-	public ResponseDTO updateUser(@RequestParam String emailId, @RequestParam String password) {
-		return userService.updateUser(emailId, password);
+	@GetMapping(value = "/{userName}")
+	public UserDto getUserByUserName(@PathVariable String userName) {
+		return userService.getUserByUserName(userName);
 	}
+
+	@PostMapping(value = "/validate/user")
+	public UserDto validateUserAndGet(@RequestBody LoginRequest uerDetails) {
+		return userService.validateUserAndGet(uerDetails);
+	}
+
 }

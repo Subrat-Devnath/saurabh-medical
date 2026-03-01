@@ -1,16 +1,16 @@
 package com.user.mgmt.service;
 
-import com.common.service.dtos.ResponseDTO;
-import com.user.mgmt.repository.dto.UserDto;
+import com.common.service.dtos.LoginRequest;
+import com.user.mgmt.client.dtos.UserDto;
 
 public interface UserService {
 
 	void addUser(UserDto userDto);
 
-	UserDto getUserById(Long id);
+	UserDto getUserById(String id);
 
-	ResponseDTO login(String emailId, String password);
+	UserDto getUserByUserName(String userName);
 
-	ResponseDTO updateUser(String emailId, String password);
+	UserDto validateUserAndGet(LoginRequest uerDetails);
 
 }

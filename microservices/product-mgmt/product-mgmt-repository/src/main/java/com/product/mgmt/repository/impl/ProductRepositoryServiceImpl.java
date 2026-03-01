@@ -1,19 +1,18 @@
 package com.product.mgmt.repository.impl;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import com.common.service.configuration.ObjectBuilderUtils;
+import com.common.service.configuration.ObjectBuilder;
 import com.product.mgmt.repository.ProductRepository;
 import com.product.mgmt.repository.dao.ProductDao;
 import com.product.mgmt.repository.dto.ProductDto;
 import com.product.mgmt.repository.entity.ProductEntity;
 import com.product.mgmt.repository.entity.ProductEntityId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductRepositoryServiceImpl implements ProductRepository {
@@ -23,7 +22,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 
 	@Override
 	public void addProduct(ProductDto productDto) {
-		ProductEntity entity = ObjectBuilderUtils.buildDtoToEntity(productDto, ProductEntity.class);
+		ProductEntity entity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductEntity.class);
 		ProductEntityId productEntityId = new ProductEntityId();
 		productEntityId.setProductName(productDto.getProductName().toUpperCase());
 		entity.setProductEntityId(productEntityId);
@@ -43,7 +42,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 			return null;
 		}
 
-		return ObjectBuilderUtils.buildEntityToDto(entityOpt.get(), ProductDto.class);
+		return ObjectBuilder.buildDtoFromEntity(entityOpt.get(), null, ProductDto.class);
 	}
 
 	@Override
@@ -62,7 +61,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 			return null;
 		}
 
-		return allProducts.stream().map(entity -> ObjectBuilderUtils.buildEntityToDto(entity, ProductDto.class))
+		return allProducts.stream().map(entity -> ObjectBuilder.buildDtoFromEntity(entity, null, ProductDto.class))
 				.collect(Collectors.toList());
 	}
 

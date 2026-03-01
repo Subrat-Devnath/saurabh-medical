@@ -23,11 +23,21 @@
 		</dependency>
 
 		<dependency>
-			<groupId>
-				subrat-code-base</groupId>
+			<groupId>subrat-code-base</groupId>
 			<artifactId>workflow-client</artifactId>
-			<version>
-				${project.version}</version>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>subrat-code-base</groupId>
+			<artifactId>security-config</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>subrat-code-base</groupId>
+			<artifactId>user-mgmt-client</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
