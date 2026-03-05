@@ -4,6 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import java.util.UUID;
 
+import com.security.client.dtos.SourceIdentity;
+import com.security.config.utils.SecurityUtil;
 import com.user.mgmt.client.dtos.RoleType;
 import com.user.mgmt.repository.OrganizationRepository;
 import com.user.mgmt.repository.RolesRepository;
@@ -105,6 +107,10 @@ public class UserServiceImpl implements UserService {
         if (StringUtils.isEmpty(userName)) {
             return null;
         }
+
+        SourceIdentity principal = SecurityUtil.getPrincipal();
+
+        //String orgId = principal.getOrgId();
 
         UserEntity userEntity = userRepository.getUserByUserName(userName);
 

@@ -71,16 +71,15 @@ public class JwtServiceImpl implements JwtService {
 
     private static Map<String, Object> getStringObjectMap(UserDto userDto, boolean isAccessToken) {
         Map<String, Object> keyAndValue = new HashMap<>();
-        keyAndValue.put("email", userDto.getEmailId());
+        keyAndValue.put("emailId", userDto.getEmailId());
         keyAndValue.put("roles", userDto.getRoles().stream().map(RolesDTO::getName).toList());
         keyAndValue.put("tokenType", "refresh");
         if (isAccessToken) {
             keyAndValue.put("tokenType", "access");
         }
 
-
         if (userDto.getOrganization() != null) {
-            keyAndValue.put("profile", userDto.getOrganization().getOrgProfile());
+            keyAndValue.put("orgProfile", userDto.getOrganization().getOrgProfile());
             keyAndValue.put("orgId", userDto.getOrganization().getId());
         }
         return keyAndValue;

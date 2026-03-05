@@ -15,13 +15,13 @@ import com.product.mgmt.repository.dto.ProductDto;
 import com.product.mgmt.service.ProductService;
 
 @RestController
-@RequestMapping(path = "/api/v1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController {
 
 	@Autowired
 	private ProductService productService;
 
-	@PostMapping(path = "/product")
+	@PostMapping(path = "/product", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void addProduct(@RequestBody ProductDto productDto) {
 		productService.addProduct(productDto);
 	}

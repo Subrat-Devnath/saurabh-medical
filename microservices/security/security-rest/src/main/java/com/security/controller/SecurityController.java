@@ -12,13 +12,13 @@ import com.common.service.dtos.LoginRequest;
 import com.security.service.SecurityService;
 
 @RestController
-@RequestMapping(path = "/api/v1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecurityController {
 
 	@Autowired
 	private SecurityService securityService;
 
-	@PostMapping("/login")
+	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public String login(@RequestBody LoginRequest loginRequest) {
 		return securityService.loginUser(loginRequest);
 	}

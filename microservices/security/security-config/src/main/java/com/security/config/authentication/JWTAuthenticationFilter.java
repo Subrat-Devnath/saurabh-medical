@@ -7,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.security.client.dtos.SourceIdentity;
+import com.security.config.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,9 +52,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         Claims payload = jwtService.parse(token).getPayload();
 
-        String userName = payload.getSubject();
+        SourceIdentity sourceIdentity = SecurityUtil.getSecuredIdentity(payload);
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userName, null,
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(sourceIdentity, null,
                 null);
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -66,10 +68,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     }
 
-    @Override
+    /*@Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-
-        String uri = request.getServletPath(); // use servletPath instead
-        return uri.equals("/api/v1/login") || uri.equals("/api/v1/validate/user") || uri.equals("/api/v1/register-normal-user");
-    }
+        String uri = request.getRequestURI();
+        return uri.contains("/api/v1/login") ||
+               uri.contains("/api/v1/validate/user") ||
+               uri.contains("/api/v1/register-normal-user");
+    }*/
 }
