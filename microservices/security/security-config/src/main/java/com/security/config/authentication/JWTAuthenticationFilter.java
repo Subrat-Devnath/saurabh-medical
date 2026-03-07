@@ -1,6 +1,7 @@
 package com.security.config.authentication;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -43,7 +44,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         String token = header.substring(7);
 
-        if (token == null || !jwtService.isAccessToken(token)) {
+        if (!jwtService.isAccessToken(token)) {
 
             filterChain.doFilter(request, response);
 
@@ -55,7 +56,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         SourceIdentity sourceIdentity = SecurityUtil.getSecuredIdentity(payload);
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(sourceIdentity, null,
-                null);
+                Collections.emptyList());
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

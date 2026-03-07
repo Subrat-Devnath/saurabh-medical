@@ -1,7 +1,7 @@
 CREATE KEYSPACE main_db WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
 
 CREATE TABLE product (
-    organizat_id  uuid,
+    organization_id  text,
     product_name  text,
     list_price    bigint,
     buy_price     bigint,
@@ -13,5 +13,5 @@ CREATE TABLE product (
     is_expired    boolean,
     expiry_date   bigint,
     purchase_date bigint,
-    PRIMARY KEY (organizat_id, product_name)
+    PRIMARY KEY (organization_id, product_name)
 );

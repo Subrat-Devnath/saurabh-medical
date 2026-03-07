@@ -2,6 +2,7 @@ package com.product.mgmt.service;
 
 import java.util.List;
 
+import com.common.service.dtos.Pageable;
 import com.product.mgmt.repository.dto.ProductDto;
 
 public interface ProductService {
@@ -14,4 +15,5 @@ public interface ProductService {
 
 	List<ProductDto> getAllProducts();
 
+	List<ProductDto> getProductsWithPagination(Pageable pageable);
 }

@@ -1,68 +1,93 @@
 package com.product.mgmt.repository.impl;
 
 import com.common.service.configuration.ObjectBuilder;
+import com.common.service.dtos.Pageable;
 import com.product.mgmt.repository.ProductRepository;
 import com.product.mgmt.repository.dao.ProductDao;
 import com.product.mgmt.repository.dto.ProductDto;
 import com.product.mgmt.repository.entity.ProductEntity;
 import com.product.mgmt.repository.entity.ProductEntityId;
+
+import com.security.config.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductRepositoryServiceImpl implements ProductRepository {
 
-	@Autowired
-	private ProductDao productDao;
+    @Autowired
+    private ProductDao productDao;
 
-	@Override
-	public void addProduct(ProductDto productDto) {
-		ProductEntity entity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductEntity.class);
-		ProductEntityId productEntityId = new ProductEntityId();
-		productEntityId.setProductName(productDto.getProductName().toUpperCase());
-		entity.setProductEntityId(productEntityId);
-		System.out.println("Product for save: " + entity);
-		productDao.save(entity);
-	}
+    @Override
+    public void addProduct(ProductDto productDto) {
+        ProductEntity entity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductEntity.class);
+        ProductEntityId productEntityId = new ProductEntityId();
+        productEntityId.setOrgansationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
+        productEntityId.setProductName(productDto.getProductName().toUpperCase());
+        entity.setProductEntityId(productEntityId);
+        System.out.println("Product for save: " + entity);
+        productDao.save(entity);
+    }
 
-	@Override
-	public ProductDto getProduct(String productName) {
+    @Override
+    public ProductDto getProduct(String productName) {
 
-		ProductEntityId id = new ProductEntityId();
-		id.setProductName(productName.toUpperCase());
+        ProductEntityId productEntityId = new ProductEntityId();
+        productEntityId.setOrgansationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
+        productEntityId.setProductName(productName.toUpperCase());
 
-		Optional<ProductEntity> entityOpt = productDao.findById(id);
+        Optional<ProductEntity> entityOpt = productDao.findById(productEntityId);
 
-		if (entityOpt.isEmpty()) {
-			return null;
-		}
+        return entityOpt.map(productEntity -> ObjectBuilder.buildDtoFromEntity(productEntity, null, ProductDto.class)).orElse(null);
 
-		return ObjectBuilder.buildDtoFromEntity(entityOpt.get(), null, ProductDto.class);
-	}
+    }
 
-	@Override
-	public void deleteProduct(String productName) {
-		ProductEntityId id = new ProductEntityId();
-		id.setProductName(productName.toUpperCase());
-		productDao.deleteById(id);
-	}
+    @Override
+    public void deleteProduct(String productName) {
+        ProductEntityId productEntityId = new ProductEntityId();
+        productEntityId.setOrgansationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
+        productEntityId.setProductName(productName.toUpperCase());
 
-	@Override
-	public List<ProductDto> getAllProducts() {
+        productDao.deleteById(productEntityId);
+    }
 
-		List<ProductEntity> allProducts = productDao.findAll();
+    @Override
+    public List<ProductDto> getAllProducts() {
 
-		if (CollectionUtils.isEmpty(allProducts)) {
-			return null;
-		}
+        List<ProductEntity> allProducts = productDao.findAll();
 
-		return allProducts.stream().map(entity -> ObjectBuilder.buildDtoFromEntity(entity, null, ProductDto.class))
-				.collect(Collectors.toList());
-	}
+        if (CollectionUtils.isEmpty(allProducts)) {
+            return null;
+        }
+
+        return allProducts.stream().map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductEntityId(), ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> getProductsWithPagination(Pageable pageable) {
+
+        if (Objects.isNull(pageable)) {
+            return List.of();
+        }
+
+        List<ProductEntity> products = productDao.getProductsWithPagination(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId(), PageRequest.of(pageable.getStartIndex().intValue(), pageable.getPageSize().intValue()));
+
+        if (CollectionUtils.isEmpty(products)) {
+            return List.of();
+        }
+
+        return products.stream().map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductEntityId(), ProductDto.class))
+                .collect(Collectors.toList());
+    }
 
 }

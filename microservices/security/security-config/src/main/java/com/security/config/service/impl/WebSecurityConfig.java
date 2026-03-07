@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,10 +41,20 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        //csrf = cross site request forgery need to disable for stateless authentication
         http.csrf().disable()
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer
-                        .cacheControl(cacheControleConfig -> cacheControleConfig.disable()))
+                        .cacheControl(HeadersConfigurer.CacheControlConfig::disable))
+                //We can call below api without authentication, rest APIS will be protected
                 .authorizeRequests().antMatchers("/api/v1/login", "/api/v1/validate/user", "/api/v1/register-normal-user").permitAll().anyRequest()
+
+                /*    stateless authentication means that the server will not maintain any
+                     session information about the client. Each request from the client must
+                     contain all the necessary information for authentication and authorization,
+                      typically in the form of a token (like JWT). This approach is often used in
+                       RESTful APIs and microservices architectures, where scalability and decoupling
+                        are important*/
+
                 .authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .httpBasic().disable().exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

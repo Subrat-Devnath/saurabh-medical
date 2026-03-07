@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = ObjectBuilder.buildDtoFromEntity(userDto, null, UserEntity.class);
 
         RolesEntity rolesEntity = rolesRepository
-                .getRoleByName(RoleType.ROLE_USER.name());
+                .getRoleByName(RoleType.USER.name());
 
         if (rolesEntity == null) {
             return;

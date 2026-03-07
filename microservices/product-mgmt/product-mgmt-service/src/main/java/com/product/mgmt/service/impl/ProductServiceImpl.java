@@ -1,5 +1,6 @@
 package com.product.mgmt.service.impl;
 
+import com.common.service.dtos.Pageable;
 import com.product.mgmt.repository.ProductRepository;
 import com.product.mgmt.repository.dto.ProductDto;
 import com.product.mgmt.service.ProductService;
@@ -11,27 +12,33 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-	@Autowired
-	private ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-	@Override
-	public void addProduct(ProductDto productDto) {
-		productRepository.addProduct(productDto);
-	}
+    @Override
+    public void addProduct(ProductDto productDto) {
+        productRepository.addProduct(productDto);
+    }
 
-	@Override
-	public ProductDto getProduct(String productName) {
-		return productRepository.getProduct(productName);
-	}
-	
-	@Override
-	public void deleteProduct(String productName) {
-		productRepository.deleteProduct(productName);
-	}
-	
-	@Override
-	public List<ProductDto> getAllProducts() {
-		return productRepository.getAllProducts();
-	}
+    @Override
+    public ProductDto getProduct(String productName) {
+        return productRepository.getProduct(productName);
+    }
+
+    @Override
+    public void deleteProduct(String productName) {
+        productRepository.deleteProduct(productName);
+    }
+
+    @Override
+    public List<ProductDto> getAllProducts() {
+        return productRepository.getAllProducts();
+    }
+
+    @Override
+    public List<ProductDto> getProductsWithPagination(Pageable pageable) {
+        return productRepository.getProductsWithPagination(pageable);
+    }
+
 
 }
