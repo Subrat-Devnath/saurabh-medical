@@ -3,15 +3,15 @@ CREATE KEYSPACE main_db WITH replication = {'class': 'SimpleStrategy', 'replicat
 CREATE TABLE product (
     organization_id  text,
     product_name  text,
-    list_price    bigint,
-    buy_price     bigint,
-    sell_price    bigint,
-    quantity      bigint,
     category      text,
-    currency_code text,
     is_deleted    boolean,
     is_expired    boolean,
     expiry_date   bigint,
-    purchase_date bigint,
-    PRIMARY KEY (organization_id, product_name)
+    created_date   bigint,
+    created_user_name   text,
+    created_user_id   text,
+    updated_date   bigint,
+    updated_user_name   text,
+    updated_user_id   text,
+    PRIMARY KEY ((organization_id), product_name)
 );

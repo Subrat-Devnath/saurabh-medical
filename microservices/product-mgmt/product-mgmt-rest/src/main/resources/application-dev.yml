@@ -8,6 +8,20 @@ spring:
   application:
     name: product-mgmt
 
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    #(For local laptop)
+    url: jdbc:mysql://localhost:3307/main_db
+    #(for point mysql in host machine (laptop) host.docker.internal)
+    #url: jdbc:mysql://host.docker.internal:3307/microservice
+    username: root
+    password: root
+
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+
   data:
     #cassandra:
       #contact-points: cassandra

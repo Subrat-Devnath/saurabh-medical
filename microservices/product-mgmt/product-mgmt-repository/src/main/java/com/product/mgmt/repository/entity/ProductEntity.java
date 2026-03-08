@@ -10,37 +10,37 @@ import lombok.Data;
 @Data
 public class ProductEntity {
 
-	@PrimaryKey
-	private ProductEntityId productEntityId;
+    @PrimaryKey
+    private ProductEntityId productEntityId;
 
-	@Column("list_price")
-	private Long listPrice;
+    @Column("category")
+    private String category;
 
-	@Column("buy_price")
-	private Long buyPrice;
-	
-	@Column("sell_price")
-	private Long sellPrice;
+    /// --------- Base entity fields ---------
+    @Column("is_deleted")
+    private boolean isDeleted;
 
-	@Column("currency_code")
-	private String currencyCode;
-	
-	@Column("quantity")
-	private Long quantity;
+    @Column("expiry_date")
+    private Long expiryDate;
 
-	@Column("category")
-	private String category;
-	
-	@Column("is_deleted")
-	private boolean isDeleted;
+    @Column("is_expired")
+    private boolean isExpired;
 
-	@Column("is_expired")
-	private boolean isExpired;
-	
-	@Column("expiry_date")
-	private Long expiryDate;
-	
-	@Column("purchase_date")
-	private Long purchasedate;
+    @Column("created_date")
+    private Long createdDate;
 
+    @Column("created_user_id")
+    private String createdUserId;
+
+    @Column("created_user_name")
+    private String createdUserName;
+
+    @Column("updated_date")
+    private Long updatedDate;
+
+    @Column("updated_user_id")
+    private String updatedUserId;
+
+    @Column("updated_user_name")
+    private String updatedUserName;
 }

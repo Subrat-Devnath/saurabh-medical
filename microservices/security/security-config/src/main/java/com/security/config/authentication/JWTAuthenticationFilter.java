@@ -1,7 +1,6 @@
 package com.security.config.authentication;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -56,7 +55,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         SourceIdentity sourceIdentity = SecurityUtil.getSecuredIdentity(payload);
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(sourceIdentity, null,
-                Collections.emptyList());
+                null);
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

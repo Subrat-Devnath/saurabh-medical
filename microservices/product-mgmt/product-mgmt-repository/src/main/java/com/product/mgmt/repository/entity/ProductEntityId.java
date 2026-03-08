@@ -1,7 +1,6 @@
 package com.product.mgmt.repository.entity;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass;
@@ -15,10 +14,10 @@ public class ProductEntityId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@PrimaryKeyColumn(name = "organizat_id", type = PrimaryKeyType.PARTITIONED)
-	private String organsationId;
+	@PrimaryKeyColumn(name = "organization_id", type = PrimaryKeyType.PARTITIONED)
+	private String organzationId;
 
-	@PrimaryKeyColumn(name = "product_name", type = PrimaryKeyType.PARTITIONED)
+	@PrimaryKeyColumn(name = "product_name", type = PrimaryKeyType.CLUSTERED)
 	private String productName;
 
 }

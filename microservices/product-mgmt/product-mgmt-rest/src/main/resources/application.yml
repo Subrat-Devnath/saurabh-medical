@@ -8,6 +8,17 @@ spring:
   application:
     name: product-mgmt
 
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    #url: ${MYSQL_URL}
+    #username: ${MYSQL_USERNAME}
+    #password: ${MYSQL_PASSWORD}
+
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+
   data:
     cassandra:
       contact-points: cassandra

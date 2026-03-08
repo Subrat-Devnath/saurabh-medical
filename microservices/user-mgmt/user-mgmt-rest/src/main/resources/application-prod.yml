@@ -12,15 +12,9 @@ spring:
 
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    #(For local laptop)
-    url: jdbc:mysql://localhost:3307/microservice  
-    username: root
-    password: root
-    #(for point mysql in host machine (laptop) host.docker.internal)
-    #url: jdbc:mysql://host.docker.internal:3307/microservice
-    #url: ${MYSQL_URL}
-    #username: ${MYSQL_USERNAME}
-    #password: ${MYSQL_PASSWORD}
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
     
   jpa:
     hibernate.ddl-auto: update

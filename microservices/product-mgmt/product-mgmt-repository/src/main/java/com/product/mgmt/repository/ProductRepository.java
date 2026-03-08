@@ -1,25 +1,22 @@
 package com.product.mgmt.repository;
 
+import com.common.service.dtos.PaginationCriteria;
+import com.product.mgmt.repository.dto.ProductDTO;
+
 import java.util.List;
-import java.util.UUID;
-
-import com.common.service.dtos.Pageable;
-import com.product.mgmt.repository.entity.ProductEntity;
-
-import org.springframework.web.bind.annotation.RequestBody;
-
-import com.product.mgmt.repository.dto.ProductDto;
 
 public interface ProductRepository {
 
-    void addProduct(@RequestBody ProductDto productDto);
+    void addProduct(ProductDTO productDto);
 
-    ProductDto getProduct(String productName);
+    ProductDTO getProduct(String productName);
+
+    List<ProductDTO> searchProduct(String productName);
 
     void deleteProduct(String productName);
 
-    List<ProductDto> getAllProducts();
+    List<ProductDTO> getAllProducts();
 
-    List<ProductDto> getProductsWithPagination(Pageable pageable);
+    List<ProductDTO> getProductsWithPagination(PaginationCriteria paginationCriteria);
 
 }

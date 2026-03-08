@@ -1,19 +1,21 @@
 package com.product.mgmt.service;
 
-import java.util.List;
+import com.common.service.dtos.PaginationCriteria;
+import com.product.mgmt.repository.dto.ProductDTO;
 
-import com.common.service.dtos.Pageable;
-import com.product.mgmt.repository.dto.ProductDto;
+import java.util.List;
 
 public interface ProductService {
 
-	void addProduct(ProductDto productDto);
+	void addProduct(ProductDTO productDto);
 
-	ProductDto getProduct(String productName);
+	ProductDTO getProduct(String productName);
 
-	void deleteProduct(String productName);
+    List<ProductDTO> searchProduct(String productName);
 
-	List<ProductDto> getAllProducts();
+    void deleteProduct(String productName);
 
-	List<ProductDto> getProductsWithPagination(Pageable pageable);
+	List<ProductDTO> getAllProducts();
+
+	List<ProductDTO> getProductsWithPagination(PaginationCriteria pageable);
 }

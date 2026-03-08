@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class Pageable implements Serializable {
+public class PaginationCriteria implements Serializable {
 
     private static final long serialVersionUID = -4112436951057744454L;
 

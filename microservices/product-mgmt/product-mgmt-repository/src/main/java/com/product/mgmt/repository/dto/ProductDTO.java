@@ -1,0 +1,14 @@
+package com.product.mgmt.repository.dto;
+
+import lombok.Data;
+
+@Data
+public class ProductDTO extends ProductPurchaseHistoryDTO {
+
+    private String productName;
+
+    private Long totalQuantity;
+
+    private String category;
+
+}
