@@ -23,6 +23,11 @@ spring:
           predicates:
             - Path=/security/api/v1/**
 
+        - id: email
+          uri: lb://email
+          predicates:
+            - Path=/email/api/v1/**
+
 eureka:
   client:
     register-with-eureka: true       # restister to eureka

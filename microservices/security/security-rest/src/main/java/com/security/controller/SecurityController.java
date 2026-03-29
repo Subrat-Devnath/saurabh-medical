@@ -1,5 +1,6 @@
 package com.security.controller;
 
+import com.security.client.dtos.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.common.service.dtos.LoginRequest;
 import com.security.service.SecurityService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecurityController {
@@ -19,7 +22,7 @@ public class SecurityController {
 	private SecurityService securityService;
 
 	@PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String login(@RequestBody LoginRequest loginRequest) {
+	public LoginResponse login(@RequestBody LoginRequest loginRequest) {
 		return securityService.loginUser(loginRequest);
 	}
 

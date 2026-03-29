@@ -1,28 +1,24 @@
 package com.security.config.service.impl;
 
+import com.security.config.service.JwtService;
+import com.user.mgmt.client.dtos.RolesDTO;
+import com.user.mgmt.client.dtos.UserDTO;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import javax.crypto.SecretKey;
-
-
-import com.user.mgmt.client.dtos.RolesDTO;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import com.security.config.service.JwtService;
-import com.user.mgmt.client.dtos.UserDto;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.util.StringUtils;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -40,37 +36,33 @@ public class JwtServiceImpl implements JwtService {
 
                           @Value("${security.jwt.issuer}") String issuer) {
 
-        if (StringUtils.isEmpty(secret) || secret.length() < 64) {
-            throw new
-                    IllegalArgumentException("Invalid key");
+        if (secret.length() < 64) {
+            throw new IllegalArgumentException("Invalid key");
         }
-        this.secretKey =
-                Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
         this.accessTtlSeconds = accessTtlSeconds;
-        this.refreshTtlSeconds =
-                refreshTtlSeconds;
+        this.refreshTtlSeconds = refreshTtlSeconds;
         this.issuer = issuer;
 
     }
 
     @Override
-    public String generateAccessToken(UserDto userDto) {
+    public String generateAccessToken(UserDTO userDto) {
 
         Instant now = Instant.now();
 
-        return Jwts.builder().id(UUID.randomUUID().toString()).subject(userDto.getName().toString()).issuer(issuer)
-                .expiration(Date.from(now.plusSeconds(accessTtlSeconds)))
-                .claims(
+        return Jwts.builder().id(UUID.randomUUID().toString()).subject(userDto.getName()).issuer(issuer).expiration(Date.from(now.plusSeconds(accessTtlSeconds))).claims(
 
-                        getStringObjectMap(userDto, true)
+                getStringObjectMap(userDto, true)
 
-                )
-                .signWith(secretKey, SignatureAlgorithm.HS512).compact();
+        ).signWith(secretKey, SignatureAlgorithm.HS512).compact();
     }
 
-    private static Map<String, Object> getStringObjectMap(UserDto userDto, boolean isAccessToken) {
+    private static Map<String, Object> getStringObjectMap(UserDTO userDto, boolean isAccessToken) {
         Map<String, Object> keyAndValue = new HashMap<>();
+        keyAndValue.put("userId", userDto.getId());
+        keyAndValue.put("userName", userDto.getName());
         keyAndValue.put("emailId", userDto.getEmailId());
         keyAndValue.put("roles", userDto.getRoles().stream().map(RolesDTO::getName).toList());
         keyAndValue.put("tokenType", "refresh");
@@ -86,15 +78,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateRefereshToken(UserDto userDto, String jwtId) {
+    public String generateRefereshToken(UserDTO userDto, String jwtId) {
 
         Instant now = Instant.now();
 
-        return Jwts.builder().id(jwtId).subject(userDto.getName().toString()).issuer(issuer)
-                .expiration(Date.from(now.plusSeconds(refreshTtlSeconds))).claims(
-                        getStringObjectMap(userDto, false)
-                )
-                .signWith(secretKey, SignatureAlgorithm.HS512).compact();
+        return Jwts.builder().id(jwtId).subject(userDto.getName()).issuer(issuer).expiration(Date.from(now.plusSeconds(refreshTtlSeconds))).claims(getStringObjectMap(userDto, false)).signWith(secretKey, SignatureAlgorithm.HS512).compact();
     }
 
     @Override
@@ -125,4 +113,13 @@ public class JwtServiceImpl implements JwtService {
         return parse(token).getPayload().getId();
     }
 
+    @Override
+    public long getAccessTtlSeconds() {
+        return accessTtlSeconds;
+    }
+
+    @Override
+    public long getRefreshTtlSeconds() {
+        return refreshTtlSeconds;
+    }
 }

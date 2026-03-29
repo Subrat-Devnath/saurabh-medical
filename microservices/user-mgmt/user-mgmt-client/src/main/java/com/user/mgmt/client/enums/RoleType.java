@@ -1,4 +1,4 @@
-package com.user.mgmt.client.dtos;
+package com.user.mgmt.client.enums;
 
 public enum RoleType {
 

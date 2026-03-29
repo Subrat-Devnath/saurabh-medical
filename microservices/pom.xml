@@ -96,5 +96,6 @@
         <module>user-mgmt</module>
         <module>security</module>
         <module>product-mgmt</module>
+        <module>email</module>
     </modules>
 </project>

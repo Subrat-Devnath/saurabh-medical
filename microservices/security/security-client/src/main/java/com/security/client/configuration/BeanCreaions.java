@@ -1,4 +1,4 @@
-package com.security.client.dtos.configuration;
+package com.security.client.configuration;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;

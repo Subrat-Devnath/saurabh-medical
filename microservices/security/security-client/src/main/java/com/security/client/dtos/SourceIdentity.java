@@ -7,8 +7,9 @@ import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+
 @Data
+@NoArgsConstructor
 public class SourceIdentity implements Serializable {
 
 	private static final long serialVersionUID = 2470691449195340395L;
@@ -36,7 +37,7 @@ public class SourceIdentity implements Serializable {
 
 	private String licenseType;
 
-	private String licenses; // YSP-35161: This field contains wrapper license value from license.txt file
+	private String licenses;
 
 	private String userCountry;
 

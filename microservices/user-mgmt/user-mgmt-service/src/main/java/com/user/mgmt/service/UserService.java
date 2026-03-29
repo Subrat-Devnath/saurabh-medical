@@ -1,16 +1,16 @@
 package com.user.mgmt.service;
 
 import com.common.service.dtos.LoginRequest;
-import com.user.mgmt.client.dtos.UserDto;
+import com.user.mgmt.client.dtos.UserDTO;
 
 public interface UserService {
 
-	void addUser(UserDto userDto);
+	void addUser(UserDTO userDto);
 
-	UserDto getUserById(String id);
+	UserDTO getUserById(String id);
 
-	UserDto getUserByUserName(String userName);
+	UserDTO getUserByUserName(String userName);
 
-	UserDto validateUserAndGet(LoginRequest uerDetails);
+	UserDTO validateUserAndGet(LoginRequest uerDetails);
 
 }

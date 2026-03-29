@@ -5,8 +5,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.security.client.dtos.SourceIdentity;
+import com.security.config.service.impl.WebSecurityConfig;
 import com.security.config.utils.SecurityUtil;
-import com.user.mgmt.client.dtos.RoleType;
+import com.user.mgmt.client.enums.RoleType;
 import com.user.mgmt.repository.OrganizationRepository;
 import com.user.mgmt.repository.RolesRepository;
 import com.user.mgmt.repository.entity.OrganizationEntity;
@@ -18,7 +19,7 @@ import org.springframework.util.StringUtils;
 
 import com.common.service.configuration.ObjectBuilder;
 import com.common.service.dtos.LoginRequest;
-import com.user.mgmt.client.dtos.UserDto;
+import com.user.mgmt.client.dtos.UserDTO;
 import com.user.mgmt.repository.UserRepository;
 import com.user.mgmt.repository.entity.UserEntity;
 import com.user.mgmt.service.UserService;
@@ -37,16 +38,17 @@ public class UserServiceImpl implements UserService {
     private OrganizationRepository organizationRepository;
 
     @Autowired
-    private PasswordEncryptor passwordEncryptor;
+    private WebSecurityConfig webSecurityConfig;
 
     @Override
-    public void addUser(UserDto userDto) {
+    public void addUser(UserDTO userDto) {
 
         try {
             String userSalt = UUID.randomUUID().toString();
             userDto.setPasswordSecret(userSalt);
 
-            String encryptedPassword = passwordEncryptor.encrypt(userDto.getPassword(), userSalt);
+            String encryptedPassword = webSecurityConfig.passwordEncoder().encode(userDto.getPassword());
+
             userDto.setPassword(encryptedPassword);
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,18 +95,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(String id) {
+    public UserDTO getUserById(String id) {
         UserEntity userById = userRepository.getUserById(id);
         if (userById == null) {
             return null;
         }
-        return ObjectBuilder.buildDtoFromEntity(userById, null, UserDto.class);
+        return ObjectBuilder.buildDtoFromEntity(userById, null, UserDTO.class);
     }
 
     @Override
-    public UserDto getUserByUserName(String userName) {
+    public UserDTO getUserByUserName(String userName) {
 
-        if (StringUtils.isEmpty(userName)) {
+        if (!StringUtils.hasText(userName)) {
             return null;
         }
 
@@ -125,25 +127,26 @@ public class UserServiceImpl implements UserService {
 
         userEntity.setOrganization(organizationEntity);
 
-        return ObjectBuilder.buildDtoFromEntity(userEntity, null, UserDto.class);
+        return ObjectBuilder.buildDtoFromEntity(userEntity, null, UserDTO.class);
     }
 
     @Override
-    public UserDto validateUserAndGet(LoginRequest loginRequest) {
-        UserDto userByUserName = getUserByUserName(loginRequest.getUserName());
+    public UserDTO validateUserAndGet(LoginRequest loginRequest) {
+
+        UserDTO userByUserName = getUserByUserName(loginRequest.getUserName());
 
         if (userByUserName == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        try {
-            String encrypt = passwordEncryptor.encrypt(loginRequest.getPassword(), userByUserName.getPasswordSecret());
+        // Decrypting the password and matching with the stored hash
+        String hash = webSecurityConfig.passwordEncoder().encode(loginRequest.getPassword());
 
-            if (userByUserName.getPassword().equals(encrypt)) {
-                return userByUserName;
-            }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        // Matching the raw password with the stored hash
+        boolean match = webSecurityConfig.passwordEncoder().matches(loginRequest.getPassword(), hash);
+
+        if (match) {
+            return userByUserName;
         }
 
         return null;

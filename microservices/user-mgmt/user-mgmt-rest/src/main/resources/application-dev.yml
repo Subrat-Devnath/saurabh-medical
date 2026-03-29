@@ -19,8 +19,6 @@ spring:
     username: root
     password: root
 
-
-    
   jpa:
     hibernate.ddl-auto: update
     generate-ddl: true
@@ -50,7 +48,7 @@ security:
 
   ## ----------- SECURITY PROPERTIES -------
   jwt:
-    secret: bXlTdXBlclNlY3VyZUhTNTEyS2V5VGhhdElzQXRMZWFzdDY0Qnl0ZXNMb25nRm9yU2VjdXJlSldUVG9rZW5TaWduaW5nMTIzNDU2
+    secret: mySuperSecureHS512KeyThatIsAtLeast64BytesLongForSecureJWTTokenSigning123456
     access-ttl-seconds: 36000
     refresh-ttl-seconds: 86400
     issuer: saurabh.com

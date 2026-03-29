@@ -2,16 +2,16 @@ package com.security.config.service;
 
 import java.util.UUID;
 
-import com.user.mgmt.client.dtos.UserDto;
+import com.user.mgmt.client.dtos.UserDTO;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 
 public interface JwtService {
 
-	String generateAccessToken(UserDto userDto);
+	String generateAccessToken(UserDTO userDto);
 
-	String generateRefereshToken(UserDto userDto, String jwtId);
+	String generateRefereshToken(UserDTO userDto, String jwtId);
 
 	Jws<Claims> parse(String token);
 
@@ -22,4 +22,8 @@ public interface JwtService {
 	UUID getUserIdFromToken(String token);
 
 	String getTokenId(String token);
+
+	long getAccessTtlSeconds();
+
+	long getRefreshTtlSeconds();
 }

@@ -37,7 +37,6 @@ public class ProductServiceImpl implements ProductService {
             return null;
         }
 
-
         Map<String, Long> mapOfProductKeysAndTotalQuantity = mapOfProductKeysAndTotalQuantity(Collections.singletonList(product.getProductName()));
 
         product.setTotalQuantity(mapOfProductKeysAndTotalQuantity.get(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId() + "-" + product.getProductName()));

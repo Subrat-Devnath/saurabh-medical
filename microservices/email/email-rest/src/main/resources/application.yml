@@ -1,0 +1,57 @@
+server:
+  port: 8085
+  servlet:
+    context-path: /email
+ 
+app:
+  master-salt: cc0b465e-c9a7-11ed-afa1-0242ac120002
+    
+spring:
+  application:
+    name: email-mgmt
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your-email@gmail.com
+    password: your-app-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+eureka:
+  client:
+    register-with-eureka: true       # restister to eureka
+    fetch-registry: true    
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ 
+      #defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}   
+      
+##--------- fien properties ---------
+
+user:
+  contextPath: "/user-mgmt"
+  url: "http://127.0.0.1:8081"
+
+product:
+  contextPath: "/product-mgmt"
+  url: "http://127.0.0.1:8082"
+
+security:
+  contextPath: "/security"
+  url: "http://127.0.0.1:8084"
+
+email:
+  contextPath: "/email"
+  url: "http://127.0.0.1:8085"
+
+  ## ----------- SECURITY PROPERTIES -------
+  jwt:
+    secret: bXlTdXBlclNlY3VyZUhTNTEyS2V5VGhhdElzQXRMZWFzdDY0Qnl0ZXNMb25nRm9yU2VjdXJlSldUVG9rZW5TaWduaW5nMTIzNDU2
+    access-ttl-seconds: 36000
+    refresh-ttl-seconds: 86400
+    issuer: saurabh.com

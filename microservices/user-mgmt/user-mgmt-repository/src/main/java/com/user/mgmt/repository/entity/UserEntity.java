@@ -1,5 +1,6 @@
 package com.user.mgmt.repository.entity;
 
+import com.user.mgmt.client.enums.Provider;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -48,6 +49,10 @@ public class UserEntity extends RootOrgContained implements Serializable {
 
     @Column(name = "last_login_date")
     private Long lastLoginDate;
+
+    //User can be created by different providers like local, google, facebook etc. This field will help to identify that.
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
 
     @ManyToMany(fetch = FetchType.EAGER)// Jab user fetch karenge usi time role bhi ana chahiye
     @JoinTable(name = "user_roles", joinColumns =

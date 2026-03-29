@@ -1,9 +1,9 @@
 package com.user.mgmt.client.dtos;
 
+import com.user.mgmt.client.enums.RoleType;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 @Data
 public class RolesDTO implements Serializable {

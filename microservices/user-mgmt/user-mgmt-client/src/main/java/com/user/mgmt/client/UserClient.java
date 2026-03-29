@@ -9,16 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.common.service.dtos.LoginRequest;
-import com.user.mgmt.client.dtos.UserDto;
+import com.user.mgmt.client.dtos.UserDTO;
 
 @Service
 @FeignClient(contextId = "userClient", name = "user-mgmt", url = "${user.url}", path = "${user.contextPath}")
 public interface UserClient {
 
-	@GetMapping(value = "/api/v1/user/{userName}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserDto getUserByUserName(@PathVariable("userName") String userName);
-
-	@PostMapping(value = "/api/v1/validate/user", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserDto validateUserAndGet(@RequestBody LoginRequest uerDetails);
+    @PostMapping(value = "/api/v1/validate/user", produces = MediaType.APPLICATION_JSON_VALUE)
+    UserDTO validateUserAndGet(@RequestBody LoginRequest uerDetails);
 
 }

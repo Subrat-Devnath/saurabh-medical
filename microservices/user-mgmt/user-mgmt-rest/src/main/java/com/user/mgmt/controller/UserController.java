@@ -1,5 +1,6 @@
 package com.user.mgmt.controller;
 
+import com.common.service.dtos.ResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,35 +11,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.common.service.dtos.LoginRequest;
-import com.user.mgmt.client.dtos.UserDto;
+import com.user.mgmt.client.dtos.UserDTO;
 import com.user.mgmt.service.UserService;
 
 @RestController
 @RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@PostMapping(value = "/register-normal-user")
-	public boolean addUser(@RequestBody UserDto userDto) {
-		userService.addUser(userDto);
-		return true;
-	}
+    @PostMapping(value = "/register-normal-user")
+    public ResponseDTO addUser(@RequestBody UserDTO userDto) {
+        userService.addUser(userDto);
+        return new ResponseDTO(true, null, null);
+    }
 
-	@GetMapping(value = "/user/{id}")
-	public UserDto getUserById(@PathVariable String id) {
-		return userService.getUserById(id);
-	}
+    @GetMapping(value = "/user/{id}")
+    public ResponseDTO getUserById(@PathVariable String id) {
+        UserDTO userDTO = userService.getUserById(id);
+        if (userDTO == null) {
+            return new ResponseDTO(false, null, "User not found for id " + id);
+        }
+        return new ResponseDTO(true, userDTO, null);
+    }
 
-	@GetMapping(value = "/{userName}")
-	public UserDto getUserByUserName(@PathVariable String userName) {
-		return userService.getUserByUserName(userName);
-	}
+    @GetMapping(value = "/{userName}")
+    public UserDTO getUserByUserName(@PathVariable String userName) {
+        return userService.getUserByUserName(userName);
+    }
 
-	@PostMapping(value = "/validate/user")
-	public UserDto validateUserAndGet(@RequestBody LoginRequest uerDetails) {
-		return userService.validateUserAndGet(uerDetails);
-	}
+    @PostMapping(value = "/validate/user")
+    public UserDTO validateUserAndGet(@RequestBody LoginRequest uerDetails) {
+        return userService.validateUserAndGet(uerDetails);
+    }
 
 }

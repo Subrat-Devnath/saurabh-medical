@@ -1,5 +1,8 @@
 package com.security.service.impl;
 
+import com.security.client.dtos.LoginResponse;
+import com.security.repository.RefreshTokenRepository;
+import com.security.repository.entity.RefreshTokenEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -8,32 +11,53 @@ import com.common.service.dtos.LoginRequest;
 import com.security.config.service.JwtService;
 import com.security.service.SecurityService;
 import com.user.mgmt.client.UserClient;
-import com.user.mgmt.client.dtos.UserDto;
+import com.user.mgmt.client.dtos.UserDTO;
+
+import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class SecurityServiceImpl implements SecurityService {
 
-	@Autowired
-	private UserClient userClient;
+    @Autowired
+    private UserClient userClient;
 
-	@Autowired
-	private JwtService jwtService;
+    @Autowired
+    private JwtService jwtService;
 
-	@Override
-	public String loginUser(LoginRequest loginRequest) {
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
-		if (loginRequest == null || StringUtils.isEmpty(loginRequest.getUserName())
-				|| StringUtils.isEmpty(loginRequest.getPassword())) {
-			return "Provide UserName and Password";
-		}
+    @Override
+    public LoginResponse loginUser(LoginRequest loginRequest) {
 
-		UserDto validateUserAndGet = userClient.validateUserAndGet(loginRequest);
+        if (loginRequest == null || !StringUtils.hasText(loginRequest.getUserName()) || !StringUtils.hasText(loginRequest.getPassword())) {
+            return null;
+        }
 
-		if (validateUserAndGet == null) {
-			return "Invalid user and password";
-		}
+        // Validate user credentials and get user details from user service
+        UserDTO userDTO = userClient.validateUserAndGet(loginRequest);
 
-		return jwtService.generateAccessToken(validateUserAndGet);
-	}
+        if (userDTO == null) {
+            return null;
+        }
+
+        UUID jwtId = UUID.randomUUID();
+        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().tokenId(jwtId).userId(userDTO.getId()).createdAt(Instant.now().getNano()).expiresAt(Instant.now().plusSeconds(jwtService.getRefreshTtlSeconds()).getNano()).revoked(false).build();
+
+        // Store refresh token details in the database
+        refreshTokenRepository.saveRefreshToken(refreshTokenEntity);
+
+        String accessToken = jwtService.generateAccessToken(userDTO);
+        String refreshToken = jwtService.generateRefereshToken(userDTO, jwtId.toString());
+
+        // Return the access token and refresh token to the client
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAccessToken(accessToken);
+        loginResponse.setRefreshToken(refreshToken);
+
+        return loginResponse;
+    }
 
 }
