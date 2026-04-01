@@ -8,23 +8,6 @@ spring:
   application:
     name: security
 
-  datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    #(For local laptop)
-    url: jdbc:mysql://localhost:3307/main_db
-    username: root
-    password: root
-    #(for point mysql in host machine (laptop) host.docker.internal)
-    #url: jdbc:mysql://host.docker.internal:3307/microservice
-    #url: ${MYSQL_URL}
-    #username: ${MYSQL_USERNAME}
-    #password: ${MYSQL_PASSWORD}
-    
-  jpa:
-    hibernate.ddl-auto: update
-    generate-ddl: true
-    show-sql: true
-
   data:
     cassandra:
       contact-points: localhost
@@ -56,9 +39,32 @@ security:
   url: "http://127.0.0.1:8084"
 
 ## ----------- SECURITY PROPERTIES -------
-  jwt: 
+  jwt:
+    # Secret key used to sign JWT tokens (Base64 encoded string recommended)
+    # Must be strong & long (at least 256-bit for HS256, 512-bit for HS512)
     secret: bXlTdXBlclNlY3VyZUhTNTEyS2V5VGhhdElzQXRMZWFzdDY0Qnl0ZXNMb25nRm9yU2VjdXJlSldUVG9rZW5TaWduaW5nMTIzNDU2
-    access-ttl-seconds: 36000 
+    # Access token validity time (in seconds)
+    # 36000 sec = 10 hours
+    access-ttl-seconds: 36000
+    # Refresh token validity time (in seconds)
+    # 86400 sec = 24 hours
     refresh-ttl-seconds: 86400
-    issuer: saurabh.com  
-  
+    # Issuer of the JWT token (who created the token)
+    # Used for validation and tracking
+    issuer: saurabh.com
+    # Cookie name where access token will be stored in browser
+    access-token-cookie-name: accessToken
+    # Cookie name where refresh token will be stored
+    refresh-token-cookie-name: refreshToken
+    # If true → cookie will only be sent over HTTPS (recommended for production)
+    cookie-secure: true
+    # If true → cookie cannot be accessed via JavaScript (protects from XSS attacks)
+    cookie-http-only: true
+    # SameSite policy for cookies:
+    # lax → allows cookies in same-site + top-level navigation
+    # strict → only same-site
+    # none → cross-site allowed (requires secure=true)
+    cookie-same-site: lax
+    # Domain for which cookie is valid
+    # 'localhost' works for local dev, in prod use your actual domain (e.g., example.com)
+    cookie-domain: localhost

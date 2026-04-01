@@ -1,6 +1,7 @@
 package com.security.service.impl;
 
 import com.security.client.dtos.LoginResponse;
+import com.security.config.service.impl.CookieServiceImpl;
 import com.security.repository.RefreshTokenRepository;
 import com.security.repository.entity.RefreshTokenEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.security.service.SecurityService;
 import com.user.mgmt.client.UserClient;
 import com.user.mgmt.client.dtos.UserDTO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
@@ -29,8 +31,11 @@ public class SecurityServiceImpl implements SecurityService {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
+    @Autowired
+    private CookieServiceImpl cookieService;
+
     @Override
-    public LoginResponse loginUser(LoginRequest loginRequest) {
+    public LoginResponse loginUser(LoginRequest loginRequest, HttpServletResponse httpServletResponse) {
 
         if (loginRequest == null || !StringUtils.hasText(loginRequest.getUserName()) || !StringUtils.hasText(loginRequest.getPassword())) {
             return null;
@@ -44,13 +49,18 @@ public class SecurityServiceImpl implements SecurityService {
         }
 
         UUID jwtId = UUID.randomUUID();
-        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().tokenId(jwtId).userId(userDTO.getId()).createdAt(Instant.now().getNano()).expiresAt(Instant.now().plusSeconds(jwtService.getRefreshTtlSeconds()).getNano()).revoked(false).build();
+
+        String accessToken = jwtService.generateAccessToken(userDTO);
+        String refreshToken = jwtService.generateRefereshToken(userDTO, jwtId.toString());
+
+        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().tokenId(jwtId).userId(userDTO.getId()).createdAt(Instant.now().getNano()).expiresAt(Instant.now().plusSeconds(jwtService.getRefreshTtlSeconds()).getNano()).revoked(false).replacedToken(refreshToken).build();
 
         // Store refresh token details in the database
         refreshTokenRepository.saveRefreshToken(refreshTokenEntity);
 
-        String accessToken = jwtService.generateAccessToken(userDTO);
-        String refreshToken = jwtService.generateRefereshToken(userDTO, jwtId.toString());
+        cookieService.attachAccessTokenToCookie(httpServletResponse, accessToken, (int) jwtService.getAccessTtlSeconds());
+        cookieService.attachRefreshTokenToCookie(httpServletResponse, refreshToken, (int) jwtService.getRefreshTtlSeconds());
+        cookieService.addNoHeaderForCookie(httpServletResponse);
 
         // Return the access token and refresh token to the client
         LoginResponse loginResponse = new LoginResponse();

@@ -14,14 +14,4 @@
 	<artifactId>security-client</artifactId>
 	<name>security-client</name>
 
-<dependencies>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-
-	
-</dependencies>
-
 </project>

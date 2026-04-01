@@ -15,7 +15,9 @@ import com.user.mgmt.client.dtos.UserDTO;
 @FeignClient(contextId = "userClient", name = "user-mgmt", url = "${user.url}", path = "${user.contextPath}")
 public interface UserClient {
 
-    @PostMapping(value = "/api/v1/validate/user", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/api/v1/validate/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     UserDTO validateUserAndGet(@RequestBody LoginRequest uerDetails);
 
+    @GetMapping(value = "/api/v1/{userName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    UserDTO getUserByUserName(@PathVariable String userName) ;
 }

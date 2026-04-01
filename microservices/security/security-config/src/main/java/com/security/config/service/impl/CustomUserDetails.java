@@ -1,6 +1,6 @@
 package com.security.config.service.impl;
 
-import com.user.mgmt.repository.entity.UserEntity;
+import com.user.mgmt.client.dtos.UserDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,9 +10,9 @@ import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
 
-    private UserEntity user;
+    private UserDTO user;
 
-    public CustomUserDetails(UserEntity user) {
+    public CustomUserDetails(UserDTO user) {
         this.user = user;
     }
 

@@ -2,34 +2,34 @@ package com.security.repository.entity;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
+import org.springframework.data.cassandra.core.mapping.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import java.util.UUID;
 
 @Builder
 @Data
-@Entity(name = "refresh_token")
+@Table("refresh_token")
 public class RefreshTokenEntity {
 
-    @PrimaryKey
-    @Column(name = "token_id")
+    @PrimaryKeyColumn(name = "token_id", type = PrimaryKeyType.PARTITIONED)
     private UUID tokenId;
 
-    @Column(name = "user_id")
+    @Column("user_id")
     private String userId;
 
-    @Column(name = "created_at", nullable = false)
+    @Column("created_at")
     private Integer createdAt;
 
-    @Column(name = "expired_at", nullable = false)
+    @Column("expired_at")
     private Integer expiresAt;
 
-    @Column(name = "revoked", nullable = false)
+    @Column("revoked")
     private boolean revoked;
 
-    @Column(name = "replaced_token")
+    @Column("replaced_token")
     private String replacedToken;
 
 }

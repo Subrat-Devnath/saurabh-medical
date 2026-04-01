@@ -14,9 +14,4 @@
 	<artifactId>email-repository</artifactId>
 	<name>email-repository</name>
 
-	<dependencies>
-
-
-	</dependencies>
-
 </project>

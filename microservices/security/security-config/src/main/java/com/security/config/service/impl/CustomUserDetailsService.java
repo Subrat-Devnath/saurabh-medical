@@ -1,7 +1,7 @@
 package com.security.config.service.impl;
 
-import com.user.mgmt.repository.UserRepository;
-import com.user.mgmt.repository.entity.UserEntity;
+import com.user.mgmt.client.UserClient;
+import com.user.mgmt.client.dtos.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserClient userClient;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        UserEntity user = userRepository.getUserByUserName(username);
+        UserDTO user = userClient.getUserByUserName(username);
 
         return new CustomUserDetails(user);
     }

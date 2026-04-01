@@ -8,23 +8,6 @@ spring:
   application:
     name: security
 
-  datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    #(For local laptop)
-    url: jdbc:mysql://localhost:3307/microservice  
-    username: root
-    password: root
-    #(for point mysql in host machine (laptop) host.docker.internal)
-    #url: jdbc:mysql://host.docker.internal:3307/microservice
-    #url: ${MYSQL_URL}
-    #username: ${MYSQL_USERNAME}
-    #password: ${MYSQL_PASSWORD}
-    
-  jpa:
-    hibernate.ddl-auto: update
-    generate-ddl: true
-    show-sql: true
-
   data:
     cassandra:
       contact-points: ${CASSANDRA_CONTACTPOINTS}
@@ -62,5 +45,11 @@ security:
     secret: bXlTdXBlclNlY3VyZUhTNTEyS2V5VGhhdElzQXRMZWFzdDY0Qnl0ZXNMb25nRm9yU2VjdXJlSldUVG9rZW5TaWduaW5nMTIzNDU2
     access-ttl-seconds: 36000 
     refresh-ttl-seconds: 86400
-    issuer: saurabh.com  
+    issuer: saurabh.com
+    access-token-cookie-name: accessToken
+    refresh-token-cookie-name: refreshToken
+    cookie-secure: true
+    cookie-http-only: true
+    cookie-same-site: lax
+    cookie-domain: ${JWT_COOKIE_DOMAIN}
   

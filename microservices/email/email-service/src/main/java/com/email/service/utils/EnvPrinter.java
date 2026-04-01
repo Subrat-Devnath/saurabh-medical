@@ -1,4 +1,4 @@
-package com.user.mgmt.service.utils;
+package com.email.service.utils;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.ConfigurableEnvironment;
