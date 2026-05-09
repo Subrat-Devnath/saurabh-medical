@@ -1,6 +1,6 @@
 server:
   port: 8079
-  
+
 spring:
   application:
     name: api-gateway
@@ -27,6 +27,23 @@ spring:
           uri: lb://email
           predicates:
             - Path=/email/api/v1/**
+
+
+## For frontend development, allow CORS from localhost:5173 (Vite dev server)
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true
 
 eureka:
   client:

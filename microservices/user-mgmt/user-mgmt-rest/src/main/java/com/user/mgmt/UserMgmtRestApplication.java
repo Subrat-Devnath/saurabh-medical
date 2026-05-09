@@ -6,7 +6,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = { "com.user", "com.security.config" })
+@SpringBootApplication(scanBasePackages = { "com.user.mgmt", "com.security.config" })
 @EnableEurekaClient
 @EnableFeignClients(basePackages = "com.product.mgmt.client")
 @EnableJpaRepositories(basePackages = "com.user.mgmt.repository.dao")

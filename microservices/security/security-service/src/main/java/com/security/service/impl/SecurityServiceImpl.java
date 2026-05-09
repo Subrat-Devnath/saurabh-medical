@@ -37,15 +37,18 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public LoginResponse loginUser(LoginRequest loginRequest, HttpServletResponse httpServletResponse) {
 
+        // Return the access token and refresh token to the client
+        LoginResponse loginResponse = new LoginResponse();
+
         if (loginRequest == null || !StringUtils.hasText(loginRequest.getUserName()) || !StringUtils.hasText(loginRequest.getPassword())) {
-            return null;
+            return loginResponse;
         }
 
         // Validate user credentials and get user details from user service
         UserDTO userDTO = userClient.validateUserAndGet(loginRequest);
 
         if (userDTO == null) {
-            return null;
+            return loginResponse;
         }
 
         UUID jwtId = UUID.randomUUID();
@@ -62,8 +65,6 @@ public class SecurityServiceImpl implements SecurityService {
         cookieService.attachRefreshTokenToCookie(httpServletResponse, refreshToken, (int) jwtService.getRefreshTtlSeconds());
         cookieService.addNoHeaderForCookie(httpServletResponse);
 
-        // Return the access token and refresh token to the client
-        LoginResponse loginResponse = new LoginResponse();
         loginResponse.setAccessToken(accessToken);
         loginResponse.setRefreshToken(refreshToken);
 
