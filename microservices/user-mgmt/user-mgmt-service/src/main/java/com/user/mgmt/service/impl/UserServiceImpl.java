@@ -3,16 +3,23 @@ package com.user.mgmt.service.impl;
 import com.common.service.configuration.ObjectBuilder;
 import com.common.service.dtos.LoginRequest;
 import com.common.service.dtos.ResponseDTO;
+import com.email.client.EmailClient;
+import com.email.client.dtos.NotificationDTO;
 import com.security.client.dtos.SourceIdentity;
 import com.security.config.service.impl.WebSecurityConfig;
 import com.security.config.utils.SecurityUtil;
+import com.user.mgmt.client.dtos.ForgotPasswordOtpRequest;
+import com.user.mgmt.client.dtos.ResetPasswordWithOtpRequest;
 import com.user.mgmt.client.dtos.UpdatePasswordRequest;
+import com.user.mgmt.client.dtos.VerifyOtpRequest;
 import com.user.mgmt.client.dtos.UserDTO;
 import com.user.mgmt.client.enums.RoleType;
 import com.user.mgmt.repository.OrganizationRepository;
+import com.user.mgmt.repository.PasswordResetOtpRepository;
 import com.user.mgmt.repository.RolesRepository;
 import com.user.mgmt.repository.UserRepository;
 import com.user.mgmt.repository.entity.OrganizationEntity;
+import com.user.mgmt.repository.entity.PasswordResetOtpEntity;
 import com.user.mgmt.repository.entity.RolesEntity;
 import com.user.mgmt.repository.entity.UserEntity;
 import com.user.mgmt.repository.enums.OrgProfile;
@@ -21,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,6 +47,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private WebSecurityConfig webSecurityConfig;
+
+    @Autowired
+    private PasswordResetOtpRepository passwordResetOtpRepository;
+
+    @Autowired
+    private EmailClient emailClient;
 
     @Override
     public ResponseDTO addUser(UserDTO userDto) {
@@ -210,6 +225,181 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return new ResponseDTO(false, null, "Error updating password: " + e.getMessage());
         }
+    }
+
+    @Override
+    public ResponseDTO sendForgotPasswordOtp(ForgotPasswordOtpRequest forgotPasswordOtpRequest) {
+        if (!StringUtils.hasText(forgotPasswordOtpRequest.getEmailId())) {
+            return new ResponseDTO(false, null, "Email ID is required");
+        }
+
+        try {
+            // Get user by email
+            UserEntity userEntity = userRepository.getUserByUserName(forgotPasswordOtpRequest.getEmailId());
+
+            if (userEntity == null) {
+                return new ResponseDTO(false, null, "User not found with provided email ID");
+            }
+
+            // Generate 6-digit OTP
+            String otp = generateOtp();
+
+            // Create OTP entity with expiry (10 minutes)
+            PasswordResetOtpEntity otpEntity = new PasswordResetOtpEntity(
+                    userEntity,
+                    otp,
+                    LocalDateTime.now().plusMinutes(10)
+            );
+
+            // Save OTP to database
+            passwordResetOtpRepository.saveOtp(otpEntity);
+
+            // Send OTP via email
+            try {
+                sendOtpEmail(userEntity.getEmailId(), userEntity.getName(), otp);
+            } catch (Exception e) {
+                e.printStackTrace();
+                // OTP is saved but email failed
+                return new ResponseDTO(false, null, "OTP generated but failed to send email: " + e.getMessage());
+            }
+
+            return new ResponseDTO(true, null, "OTP sent successfully to your email");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDTO(false, null, "Error sending OTP: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO verifyOtp(VerifyOtpRequest verifyOtpRequest) {
+        if (!StringUtils.hasText(verifyOtpRequest.getEmailId())) {
+            return new ResponseDTO(false, null, "Email ID is required");
+        }
+
+        if (!StringUtils.hasText(verifyOtpRequest.getOtp())) {
+            return new ResponseDTO(false, null, "OTP is required");
+        }
+
+        try {
+            // Get user by email
+            UserEntity userEntity = userRepository.getUserByUserName(verifyOtpRequest.getEmailId());
+
+            if (userEntity == null) {
+                return new ResponseDTO(false, null, "User not found with provided email ID");
+            }
+
+            // Get OTP from database
+            PasswordResetOtpEntity otpEntity = passwordResetOtpRepository.getOtpByOtpAndUserId(
+                    verifyOtpRequest.getOtp(),
+                    userEntity.getId()
+            );
+
+            if (otpEntity == null) {
+                return new ResponseDTO(false, null, "Invalid OTP");
+            }
+
+            // Check if OTP is already verified
+            if (otpEntity.isVerified()) {
+                return new ResponseDTO(false, null, "OTP has already been verified");
+            }
+
+            // Check if OTP has expired
+            if (LocalDateTime.now().isAfter(otpEntity.getExpiryDate())) {
+                return new ResponseDTO(false, null, "OTP has expired");
+            }
+
+            // Mark OTP as verified
+            otpEntity.setVerified(true);
+            passwordResetOtpRepository.updateOtp(otpEntity);
+
+            return new ResponseDTO(true, null, "OTP verified successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDTO(false, null, "Error verifying OTP: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseDTO resetPasswordWithOtp(ResetPasswordWithOtpRequest resetPasswordWithOtpRequest) {
+        if (!StringUtils.hasText(resetPasswordWithOtpRequest.getEmailId())) {
+            return new ResponseDTO(false, null, "Email ID is required");
+        }
+
+        if (!StringUtils.hasText(resetPasswordWithOtpRequest.getOtp())) {
+            return new ResponseDTO(false, null, "OTP is required");
+        }
+
+        if (!StringUtils.hasText(resetPasswordWithOtpRequest.getNewPassword())) {
+            return new ResponseDTO(false, null, "New password is required");
+        }
+
+        try {
+            // Get user by email
+            UserEntity userEntity = userRepository.getUserByUserName(resetPasswordWithOtpRequest.getEmailId());
+
+            if (userEntity == null) {
+                return new ResponseDTO(false, null, "User not found with provided email ID");
+            }
+
+            // Verify OTP
+            PasswordResetOtpEntity otpEntity = passwordResetOtpRepository.getOtpByOtpAndUserId(
+                    resetPasswordWithOtpRequest.getOtp(),
+                    userEntity.getId()
+            );
+
+            if (otpEntity == null) {
+                return new ResponseDTO(false, null, "Invalid OTP");
+            }
+
+            // Check if OTP is verified
+            if (!otpEntity.isVerified()) {
+                return new ResponseDTO(false, null, "OTP has not been verified");
+            }
+
+            // Check if OTP has expired
+            if (LocalDateTime.now().isAfter(otpEntity.getExpiryDate())) {
+                return new ResponseDTO(false, null, "OTP has expired");
+            }
+
+            // Update password
+            String encryptedPassword = webSecurityConfig.passwordEncoder()
+                    .encode(resetPasswordWithOtpRequest.getNewPassword());
+            userEntity.setPassword(encryptedPassword);
+            userRepository.addUser(userEntity);
+
+            return new ResponseDTO(true, null, "Password reset successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDTO(false, null, "Error resetting password: " + e.getMessage());
+        }
+    }
+
+    // Helper method to generate OTP
+    private String generateOtp() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000);
+        return String.valueOf(otp);
+    }
+
+    // Helper method to send OTP via email
+    private void sendOtpEmail(String toEmail, String userName, String otp) throws Exception {
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setTo(toEmail);
+        notificationDTO.setSubject("Password Reset OTP");
+        notificationDTO.setMessage(
+                "<html><body>" +
+                "<h2>Password Reset Request</h2>" +
+                "<p>Dear " + userName + ",</p>" +
+                "<p>You have requested to reset your password. Please use the following OTP to proceed:</p>" +
+                "<h1 style='color: #0066cc;'>" + otp + "</h1>" +
+                "<p>This OTP is valid for 10 minutes.</p>" +
+                "<p>If you did not request this, please ignore this email.</p>" +
+                "<p>Best regards,<br>Saurabh Medical Team</p>" +
+                "</body></html>"
+        );
+        notificationDTO.setFrom("noreply@saurabh-medical.com");
+
+        emailClient.sendEmailWithAttachment(notificationDTO);
     }
 
 }

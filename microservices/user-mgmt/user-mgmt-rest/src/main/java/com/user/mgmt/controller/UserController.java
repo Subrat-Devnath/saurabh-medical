@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.common.service.dtos.LoginRequest;
+import com.user.mgmt.client.dtos.ForgotPasswordOtpRequest;
+import com.user.mgmt.client.dtos.ResetPasswordWithOtpRequest;
 import com.user.mgmt.client.dtos.UpdatePasswordRequest;
+import com.user.mgmt.client.dtos.VerifyOtpRequest;
 import com.user.mgmt.client.dtos.UserDTO;
 import com.user.mgmt.service.UserService;
 
@@ -49,6 +52,21 @@ public class UserController {
     @PostMapping(value = "/update-password")
     public ResponseDTO updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
         return userService.updatePassword(updatePasswordRequest);
+    }
+
+    @PostMapping(value = "/send-forgot-password-otp")
+    public ResponseDTO sendForgotPasswordOtp(@RequestBody ForgotPasswordOtpRequest forgotPasswordOtpRequest) {
+        return userService.sendForgotPasswordOtp(forgotPasswordOtpRequest);
+    }
+
+    @PostMapping(value = "/verify-otp")
+    public ResponseDTO verifyOtp(@RequestBody VerifyOtpRequest verifyOtpRequest) {
+        return userService.verifyOtp(verifyOtpRequest);
+    }
+
+    @PostMapping(value = "/reset-password-with-otp")
+    public ResponseDTO resetPasswordWithOtp(@RequestBody ResetPasswordWithOtpRequest resetPasswordWithOtpRequest) {
+        return userService.resetPasswordWithOtp(resetPasswordWithOtpRequest);
     }
 
 }
