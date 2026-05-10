@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.common.service.dtos.LoginRequest;
+import com.user.mgmt.client.dtos.UpdatePasswordRequest;
 import com.user.mgmt.client.dtos.UserDTO;
 import com.user.mgmt.service.UserService;
 
@@ -43,6 +44,11 @@ public class UserController {
     @PostMapping(value = "/validate/user")
     public UserDTO validateUserAndGet(@RequestBody LoginRequest uerDetails) {
         return userService.validateUserAndGet(uerDetails);
+    }
+
+    @PostMapping(value = "/update-password")
+    public ResponseDTO updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+        return userService.updatePassword(updatePasswordRequest);
     }
 
 }

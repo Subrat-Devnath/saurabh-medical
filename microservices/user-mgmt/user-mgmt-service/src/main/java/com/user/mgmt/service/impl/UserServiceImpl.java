@@ -6,6 +6,7 @@ import com.common.service.dtos.ResponseDTO;
 import com.security.client.dtos.SourceIdentity;
 import com.security.config.service.impl.WebSecurityConfig;
 import com.security.config.utils.SecurityUtil;
+import com.user.mgmt.client.dtos.UpdatePasswordRequest;
 import com.user.mgmt.client.dtos.UserDTO;
 import com.user.mgmt.client.enums.RoleType;
 import com.user.mgmt.repository.OrganizationRepository;
@@ -157,6 +158,58 @@ public class UserServiceImpl implements UserService {
         }
 
         return null;
+    }
+
+    @Override
+    public ResponseDTO updatePassword(UpdatePasswordRequest updatePasswordRequest) {
+        // Validate inputs
+        if (!StringUtils.hasText(updatePasswordRequest.getEmailId())) {
+            return new ResponseDTO(false, null, "Email ID is required");
+        }
+
+        if (!StringUtils.hasText(updatePasswordRequest.getOldPassword())) {
+            return new ResponseDTO(false, null, "Old password is required");
+        }
+
+        if (!StringUtils.hasText(updatePasswordRequest.getNewPassword())) {
+            return new ResponseDTO(false, null, "New password is required");
+        }
+
+        try {
+            // Get user by email
+            UserEntity userEntity = userRepository.getUserByUserName(updatePasswordRequest.getEmailId());
+
+            if (userEntity == null) {
+                return new ResponseDTO(false, null, "User not found with provided email ID");
+            }
+
+            // Verify old password matches
+            boolean passwordMatch = webSecurityConfig.passwordEncoder()
+                    .matches(updatePasswordRequest.getOldPassword(), userEntity.getPassword());
+
+            if (!passwordMatch) {
+                return new ResponseDTO(false, null, "Old password is incorrect");
+            }
+
+            // Check if new password is same as old password
+            boolean isSamePassword = webSecurityConfig.passwordEncoder()
+                    .matches(updatePasswordRequest.getNewPassword(), userEntity.getPassword());
+
+            if (isSamePassword) {
+                return new ResponseDTO(false, null, "New password cannot be same as old password");
+            }
+
+            // Encrypt and update new password
+            String encryptedPassword = webSecurityConfig.passwordEncoder()
+                    .encode(updatePasswordRequest.getNewPassword());
+            userEntity.setPassword(encryptedPassword);
+            userRepository.addUser(userEntity);
+
+            return new ResponseDTO(true, null, "Password updated successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDTO(false, null, "Error updating password: " + e.getMessage());
+        }
     }
 
 }
