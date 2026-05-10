@@ -1,29 +1,27 @@
 package com.user.mgmt.service.impl;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.Set;
-import java.util.UUID;
-
+import com.common.service.configuration.ObjectBuilder;
+import com.common.service.dtos.LoginRequest;
+import com.common.service.dtos.ResponseDTO;
 import com.security.client.dtos.SourceIdentity;
 import com.security.config.service.impl.WebSecurityConfig;
 import com.security.config.utils.SecurityUtil;
+import com.user.mgmt.client.dtos.UserDTO;
 import com.user.mgmt.client.enums.RoleType;
 import com.user.mgmt.repository.OrganizationRepository;
 import com.user.mgmt.repository.RolesRepository;
+import com.user.mgmt.repository.UserRepository;
 import com.user.mgmt.repository.entity.OrganizationEntity;
 import com.user.mgmt.repository.entity.RolesEntity;
+import com.user.mgmt.repository.entity.UserEntity;
 import com.user.mgmt.repository.enums.OrgProfile;
+import com.user.mgmt.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.common.service.configuration.ObjectBuilder;
-import com.common.service.dtos.LoginRequest;
-import com.user.mgmt.client.dtos.UserDTO;
-import com.user.mgmt.repository.UserRepository;
-import com.user.mgmt.repository.entity.UserEntity;
-import com.user.mgmt.service.UserService;
-import com.user.mgmt.service.utils.PasswordEncryptor;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,7 +39,13 @@ public class UserServiceImpl implements UserService {
     private WebSecurityConfig webSecurityConfig;
 
     @Override
-    public void addUser(UserDTO userDto) {
+    public ResponseDTO addUser(UserDTO userDto) {
+
+        UserEntity existingUser = userRepository.getUserByUserName(userDto.getName());
+
+        if (existingUser != null) {
+            return new ResponseDTO(false, null, "User already exists");
+        }
 
         try {
             String userSalt = UUID.randomUUID().toString();
@@ -52,6 +56,7 @@ public class UserServiceImpl implements UserService {
             userDto.setPassword(encryptedPassword);
         } catch (Exception e) {
             e.printStackTrace();
+            return new ResponseDTO(false, null, e.getMessage());
         }
 
         UserEntity userEntity = ObjectBuilder.buildDtoFromEntity(userDto, null, UserEntity.class);
@@ -60,7 +65,7 @@ public class UserServiceImpl implements UserService {
                 .getRoleByName(RoleType.USER.name());
 
         if (rolesEntity == null) {
-            return;
+            return new ResponseDTO(false, null, "Role not found for user");
         }
 
         userEntity.setRoles(Set.of(rolesEntity));
@@ -74,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
             userEntity.setOrganization(organizationEntity);
             userRepository.addUser(userEntity);
-            return;
+            return new ResponseDTO(true, null, null);
         }
 
         OrganizationEntity newOrganizationEntity = new OrganizationEntity();
@@ -91,6 +96,8 @@ public class UserServiceImpl implements UserService {
         userEntity.setOrganization(newOrganizationEntity);
 
         userRepository.addUser(userEntity);
+
+        return new ResponseDTO(true, null, null);
 
     }
 

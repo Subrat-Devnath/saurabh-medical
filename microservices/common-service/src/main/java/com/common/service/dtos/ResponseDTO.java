@@ -10,13 +10,13 @@ public class ResponseDTO implements Serializable {
 	private static final long serialVersionUID = -4112436951057744456L;
 
 	private boolean isSuccess;
-	private Object data;
-	private String sucessMessage;
+	private Object responseObject;
+	private String message;
 
-	public ResponseDTO(boolean isSuccess, Object data, String sucessMessage) {
+	public ResponseDTO(boolean isSuccess, Object responseObject, String sucessMessage) {
 		this.isSuccess = isSuccess;
-		this.data = data;
-		this.sucessMessage = sucessMessage;
+		this.responseObject = responseObject;
+		this.message = sucessMessage;
 	}
 
 }

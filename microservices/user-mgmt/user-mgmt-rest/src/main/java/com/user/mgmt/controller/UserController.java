@@ -23,8 +23,7 @@ public class UserController {
 
     @PostMapping(value = "/register-normal-user")
     public ResponseDTO addUser(@RequestBody UserDTO userDto) {
-        userService.addUser(userDto);
-        return new ResponseDTO(true, null, null);
+       return userService.addUser(userDto);
     }
 
     @GetMapping(value = "/user/{id}")
