@@ -1,6 +1,5 @@
 package com.product.mgmt.service.impl;
 
-import com.product.mgmt.repository.ProductCustomRepository;
 import com.product.mgmt.repository.ProductPurchaceHistoryRepository;
 import com.product.mgmt.repository.ProductRepository;
 import com.product.mgmt.repository.dto.ProductDTO;
@@ -23,9 +22,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductPurchaceHistoryRepository productPurchaceHistoryRepository;
-
-    @Autowired
-    private ProductCustomRepository productCustomRepository;
 
     @Override
     public void addProduct(ProductDTO productDto) {
@@ -91,15 +87,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductPageResponse getProducts(
-            Integer pageSize,
-            String pageState
-    ) {
-        return productCustomRepository.getProducts(
-                SecurityUtil.getPrincipal().getOrgId(),
-                pageSize,
-                pageState
-        );
+    public ProductPageResponse getProductsByOrganizationId(String organizationId, Integer pageSize, String pageState) {
+        return productRepository.getProductsByOrganizationId(organizationId, pageSize, pageState);
     }
 
 }

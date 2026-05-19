@@ -2,12 +2,14 @@ package com.product.mgmt.repository.dao;
 
 import java.util.List;
 
+import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.cassandra.repository.Query;
 
 import com.product.mgmt.repository.entity.ProductEntity;
 import com.product.mgmt.repository.entity.ProductEntityId;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface ProductDAO extends CassandraRepository<ProductEntity, ProductEntityId> {
 
@@ -16,4 +18,6 @@ public interface ProductDAO extends CassandraRepository<ProductEntity, ProductEn
 
     @Query("SELECT * FROM product WHERE organization_id = ?0 AND product_name >= ?1 AND product_name < ?2")
     List<ProductEntity> searchProducts(String organizationId, String start, String end);
+
+    Slice<ProductEntity> findByProductEntityIdOrganizationId(String organizationId, CassandraPageRequest pageRequest);
 }

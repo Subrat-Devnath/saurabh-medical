@@ -15,7 +15,7 @@ public class ProductEntityId implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@PrimaryKeyColumn(name = "organization_id", type = PrimaryKeyType.PARTITIONED)
-	private String organzationId;
+	private String organizationId;
 
 	@PrimaryKeyColumn(name = "product_name", type = PrimaryKeyType.CLUSTERED)
 	private String productName;

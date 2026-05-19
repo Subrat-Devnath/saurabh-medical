@@ -18,9 +18,5 @@ public interface ProductService {
 
     List<ProductDTO> getAllProducts();
 
-    ProductPageResponse getProducts(
-
-            Integer pageSize,
-            String pageState
-    );
+    ProductPageResponse getProductsByOrganizationId(String organizationId, Integer pageSize, String pageState);
 }

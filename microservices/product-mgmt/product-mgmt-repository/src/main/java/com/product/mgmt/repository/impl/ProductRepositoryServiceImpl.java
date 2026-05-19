@@ -1,25 +1,27 @@
 package com.product.mgmt.repository.impl;
 
 import com.common.service.configuration.ObjectBuilder;
-import com.common.service.dtos.PaginationCriteria;
+import com.datastax.oss.driver.api.core.cql.PagingState;
 import com.product.mgmt.repository.ProductRepository;
 import com.product.mgmt.repository.dao.ProductDAO;
 import com.product.mgmt.repository.dao.ProductPurchaceHistoryDAO;
 import com.product.mgmt.repository.dto.ProductDTO;
+import com.product.mgmt.repository.dto.ProductPageResponse;
 import com.product.mgmt.repository.entity.ProductEntity;
 import com.product.mgmt.repository.entity.ProductEntityId;
 import com.product.mgmt.repository.entity.ProductPurchaceHistoryEntity;
 import com.product.mgmt.repository.entity.ProductPurchaceHistoryEntityId;
 import com.security.config.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.nio.ByteBuffer;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,15 +39,12 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 
         if (productDto.getPurchaseDate() == null) {
             //Set current date as purchase date for the product
-            productDto.setPurchaseDate(java.time.LocalDate.now()
-                    .atStartOfDay(java.time.ZoneId.systemDefault())
-                    .toInstant()
-                    .toEpochMilli());
+            productDto.setPurchaseDate(java.time.LocalDate.now().atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli());
         }
 
         ProductEntity entity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductEntity.class);
         ProductEntityId productEntityId = new ProductEntityId();
-        productEntityId.setOrganzationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
+        productEntityId.setOrganizationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
         productEntityId.setProductName(productDto.getProductName().toUpperCase());
         entity.setProductEntityId(productEntityId);
         productDao.save(entity);
@@ -67,7 +66,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
     public ProductDTO getProduct(String productName) {
 
         ProductEntityId productEntityId = new ProductEntityId();
-        productEntityId.setOrganzationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
+        productEntityId.setOrganizationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
         productEntityId.setProductName(productName.toUpperCase());
 
         Optional<ProductEntity> entityOpt = productDao.findById(productEntityId);
@@ -100,7 +99,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
     @Override
     public void deleteProduct(String productName) {
         ProductEntityId productEntityId = new ProductEntityId();
-        productEntityId.setOrganzationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
+        productEntityId.setOrganizationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
         productEntityId.setProductName(productName.toUpperCase());
 
         productDao.deleteById(productEntityId);
@@ -118,4 +117,65 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
         return allProducts.stream().filter(entity -> !entity.isDeleted()).map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductEntityId(), ProductDTO.class)).collect(Collectors.toList());
     }
 
+    @Override
+    public ProductPageResponse getProductsByOrganizationId(String organizationId, Integer pageSize, String pageState) {
+
+        CassandraPageRequest pageRequest = (StringUtils.isEmpty(pageState) ? CassandraPageRequest.first(pageSize) : CassandraPageRequest.of(
+                PageRequest.of(0, pageSize),
+                ByteBuffer.wrap(
+                        Base64.getDecoder().decode(pageState)
+                )));
+
+        Slice<ProductEntity> allProducts = productDao.findByProductEntityIdOrganizationId(organizationId, pageRequest);
+
+        ProductPageResponse response = new ProductPageResponse();
+
+        if (allProducts == null || !allProducts.hasContent()) {
+
+            response.setProducts(Collections.emptyList());
+            response.setHasNext(false);
+
+            return response;
+        }
+
+        List<ProductDTO> products = allProducts.stream()
+                .filter(entity -> !entity.isDeleted())
+                .map(entity ->
+                        ObjectBuilder.buildDtoFromEntity(
+                                entity,
+                                entity.getProductEntityId(),
+                                ProductDTO.class
+                        )
+                )
+                .collect(Collectors.toList());
+
+        response.setProducts(products);
+
+        // Next page not present
+        if (!allProducts.hasNext()) {
+            response.setHasNext(false);
+            return response;
+        }
+
+        CassandraPageRequest nextPageable =
+                (CassandraPageRequest) allProducts.nextPageable();
+
+        ByteBuffer nextPagingState =
+                nextPageable.getPagingState();
+
+        if (nextPagingState == null) {
+            response.setHasNext(false);
+            return response;
+        }
+
+        byte[] bytes = new byte[nextPagingState.remaining()];
+
+        nextPagingState.duplicate().get(bytes);
+
+        response.setNextPageState(Base64.getEncoder().encodeToString(bytes));
+
+        response.setHasNext(true);
+
+        return response;
+    }
 }
