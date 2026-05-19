@@ -1,7 +1,7 @@
 package com.product.mgmt.repository.impl;
 
 import com.common.service.configuration.ObjectBuilder;
-import com.product.mgmt.repository.ProductPurchaceHistoryRepository;
+import com.product.mgmt.repository.ProductPurchaseHistoryRepository;
 import com.product.mgmt.repository.dao.ProductPurchaseHistoryDAO;
 import com.product.mgmt.repository.dto.ProductPurchaseHistoryDTO;
 import com.product.mgmt.repository.entity.ProductPurchaseHistoryEntity;
@@ -16,13 +16,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
-public class ProductPurchaceHistoryRepositoryImpl implements ProductPurchaceHistoryRepository {
+public class ProductPurchaceHistoryRepositoryImpl implements ProductPurchaseHistoryRepository {
 
     @Autowired
     private ProductPurchaseHistoryDAO productPurchaceHistoryDAO;
 
     @Override
-    public List<ProductPurchaseHistoryDTO> getProductPurchaceHistory(String productName) {
+    public List<ProductPurchaseHistoryDTO> getProductPurchaseHistory(String productName) {
 
         if (!StringUtils.hasLength(productName)) {
             return List.of();

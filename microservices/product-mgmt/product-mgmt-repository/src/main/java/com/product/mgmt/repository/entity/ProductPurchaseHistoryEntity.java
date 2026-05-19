@@ -16,19 +16,19 @@ public class ProductPurchaseHistoryEntity implements Serializable {
     private ProductPurchaseHistoryEntityId productPurchaseHistoryEntityId;
 
     @Column("list_price")
-    private Long listPrice;
+    private Double listPrice;
 
     @Column("buy_price")
-    private Long buyPrice;
+    private Double buyPrice;
 
     @Column("buy_discount")
-    private Long buyDiscount;
+    private Double buyDiscount;
 
     @Column("sell_price")
-    private Long sellPrice;
+    private Double sellPrice;
 
     @Column("sell_discount")
-    private Long sellDiscount;
+    private Double sellDiscount;
 
     @Column("purchased_quantity")
     private Long purchasedQuantity;

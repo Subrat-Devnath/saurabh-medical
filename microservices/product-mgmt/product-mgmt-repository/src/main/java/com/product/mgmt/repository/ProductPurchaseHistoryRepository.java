@@ -4,9 +4,9 @@ import com.product.mgmt.repository.dto.ProductPurchaseHistoryDTO;
 
 import java.util.List;
 
-public interface ProductPurchaceHistoryRepository {
+public interface ProductPurchaseHistoryRepository {
 
-    List<ProductPurchaseHistoryDTO> getProductPurchaceHistory(String productName);
+    List<ProductPurchaseHistoryDTO> getProductPurchaseHistory(String productName);
 
     List<ProductPurchaseHistoryDTO> getProductQuantities(List<String> productName);
 }

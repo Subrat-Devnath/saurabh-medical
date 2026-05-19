@@ -11,15 +11,15 @@ public class ProductPurchaseHistoryDTO implements Serializable {
 
     private Long purchaseDate;
 
-    private Long listPrice;
+    private Double listPrice;
 
-    private Long buyPrice;
+    private Double buyPrice;
 
-    private Long buyDiscount;
+    private Double buyDiscount;
 
-    private Long sellPrice;
+    private Double sellPrice;
 
-    private Long sellDiscount;
+    private Double sellDiscount;
 
     private Long purchasedQuantity;
 

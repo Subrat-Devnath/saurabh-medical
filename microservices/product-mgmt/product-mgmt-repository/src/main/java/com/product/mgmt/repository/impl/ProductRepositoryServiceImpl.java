@@ -30,7 +30,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
     private ProductDAO productDao;
 
     @Autowired
-    private ProductPurchaseHistoryDAO productPurchaceHistoryDAO;
+    private ProductPurchaseHistoryDAO productPurchaseHistoryDAO;
 
 
     @Override
@@ -62,7 +62,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 
         productPurchaseHistoryEntity.setProductPurchaseHistoryEntityId(productPurchaseHistoryEntityId);
 
-        productPurchaceHistoryDAO.save(productPurchaseHistoryEntity);
+        productPurchaseHistoryDAO.save(productPurchaseHistoryEntity);
     }
 
     private ProductPurchaseHistoryEntityId getProductPurchaseHistoryEntityId(ProductDTO productDto) {

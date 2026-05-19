@@ -4,11 +4,11 @@ CREATE TABLE product_purchase_history
     product_name       text,
     supplier_name      text,
 
-    list_price         bigint,
-    buy_price          bigint,
-    buy_discount       bigint,
-    sell_price         bigint,
-    sell_discount      bigint,
+    list_price         double,
+    buy_price          double,
+    buy_discount       double,
+    sell_price         double,
+    sell_discount      double,
 
     purchased_quantity bigint,
     remaining_quantity bigint,
