@@ -85,7 +85,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
             return List.of();
         }
         String start = productName.toUpperCase();
-        String end = productName.toUpperCase() + "~";
+        String end = start + Character.MAX_VALUE;
 
         List<ProductEntity> products = productDao.searchProducts(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId(), start, end);
 

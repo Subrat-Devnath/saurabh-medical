@@ -71,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
 
         Map<String, Long> mapOfProductKeysAndTotalQuantity = mapOfProductKeysAndTotalQuantity(productDTOS.stream().map(ProductDTO::getProductName).toList());
 
-        productDTOS.stream().forEach(productDTO -> productDTO.setTotalQuantity(mapOfProductKeysAndTotalQuantity.get(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId() + "-" + productDTO.getProductName())));
+        productDTOS.forEach(productDTO -> productDTO.setTotalQuantity(mapOfProductKeysAndTotalQuantity.get(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId() + "-" + productDTO.getProductName())));
 
         return productDTOS;
     }
