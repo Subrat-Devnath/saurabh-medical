@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.jdt.internal.ui.DynamicSourcesWorkingSet" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1775064492847_0" label="Java Main Sources" name="Java Main Sources"/>
+<workingSet editPageId="org.eclipse.jdt.internal.ui.DynamicSourcesWorkingSet" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1775064492944_1" label="Java Test Sources" name="Java Test Sources"/>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1775064675404_3" label="microservices" name="microservices">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/microservices" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/service-registry" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/api-gateway" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/user-mgmt" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/user-mgmt-rest" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/user-mgmt-client" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/user-mgmt-service" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/user-mgmt-repository" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/security" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/security-rest" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/security-client" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/security-service" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/security-repository" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/security-config" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/product-mgmt" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/product-mgmt-rest" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/product-mgmt-client" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/product-mgmt-service" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/product-mgmt-repository" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/email" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/email-rest" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/email-client" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/email-service" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/email-repository" type="4"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1775064495121_2" label="Window Working Set" name="Aggregate for window 1775064495121"/>
+</workingSetManager>
