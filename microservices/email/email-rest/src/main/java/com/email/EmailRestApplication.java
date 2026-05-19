@@ -7,7 +7,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication(scanBasePackages = {"com.email", "com.security.config"})
 @EnableEurekaClient
-@EnableFeignClients(basePackages = "com.user.mgmt.client")
 public class EmailRestApplication {
 
     public static void main(String[] args) {

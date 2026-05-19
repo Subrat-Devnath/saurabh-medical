@@ -1,9 +1,10 @@
 package com.product.mgmt.service.impl;
 
-import com.common.service.dtos.PaginationCriteria;
+import com.product.mgmt.repository.ProductCustomRepository;
 import com.product.mgmt.repository.ProductPurchaceHistoryRepository;
 import com.product.mgmt.repository.ProductRepository;
 import com.product.mgmt.repository.dto.ProductDTO;
+import com.product.mgmt.repository.dto.ProductPageResponse;
 import com.product.mgmt.repository.dto.ProductPurchaseHistoryDTO;
 import com.product.mgmt.service.ProductService;
 import com.security.config.utils.SecurityUtil;
@@ -22,6 +23,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductPurchaceHistoryRepository productPurchaceHistoryRepository;
+
+    @Autowired
+    private ProductCustomRepository productCustomRepository;
 
     @Override
     public void addProduct(ProductDTO productDto) {
@@ -87,9 +91,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getProductsWithPagination(PaginationCriteria paginationCriteria) {
-        return productRepository.getProductsWithPagination(paginationCriteria);
+    public ProductPageResponse getProducts(
+            Integer pageSize,
+            String pageState
+    ) {
+        return productCustomRepository.getProducts(
+                SecurityUtil.getPrincipal().getOrgId(),
+                pageSize,
+                pageState
+        );
     }
-
 
 }

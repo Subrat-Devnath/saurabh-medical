@@ -65,7 +65,9 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
                 .headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer
                         .cacheControl(HeadersConfigurer.CacheControlConfig::disable))
                 //We can call below api without authentication, rest APIS will be protected
-                .authorizeRequests().antMatchers("/api/v1/login", "/api/v1/validate/user", "/api/v1/register-normal-user").permitAll().anyRequest()
+                .authorizeRequests()
+                .antMatchers("/api/v1/login", "/api/v1/validate/user", "/api/v1/register-normal-user", "/api/v1/send-forgot-password-otp", "/api/v1/verify-otp", "/api/v1/reset-password-with-otp", "/api/v1/send-email")
+                .permitAll().anyRequest()
 
                 /*    stateless authentication means that the server will not maintain any
                      session information about the client. Each request from the client must

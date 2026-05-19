@@ -23,15 +23,11 @@ public class SecurityUtil {
 
     public static SourceIdentity getPrincipal() {
 
-        try {
-            if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null) {
-                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                if (principal instanceof SourceIdentity) {
-                    return (SourceIdentity) principal;
-                }
+        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null) {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof SourceIdentity) {
+                return (SourceIdentity) principal;
             }
-        } catch (Exception e) {
-            //logger.error("SPRING CONTEXT FOR USER IS NOT YET SET", e);
         }
         return null;
     }

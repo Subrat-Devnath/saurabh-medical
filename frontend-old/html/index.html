@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login page</title>
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+
+<section class="login-wrapper">
+  <div id="loginBox">
+    <h2 id="loginHeading">Welcome</h2>
+    <p class="sub-text">Please login to your account</p>
+
+    <!-- ✅ IDs added -->
+    <input id="email" class="placeHolders" type="email" placeholder="Email address">
+    <input id="password" class="placeHolders" type="password" placeholder="Password">
+
+    <!-- ✅ Error message -->
+    <p id="errorMsg" style="color:red; display:none;"></p>
+
+    <!-- ✅ Call login() -->
+    <button type="button" onclick="login()">Login</button>
+
+    <span class="footer-text">Forgot password?</span>
+  </div>
+</section>
+
+<script src="../js/login.js"></script>
+</body>
+</html>

@@ -14,4 +14,6 @@ public class NotificationDTO implements Serializable {
 
     private String cc;
     private String bcc;
+
+    private boolean isHtml;
 }

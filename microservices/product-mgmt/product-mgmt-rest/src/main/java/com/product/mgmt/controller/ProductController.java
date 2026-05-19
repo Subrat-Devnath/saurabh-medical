@@ -1,12 +1,13 @@
 package com.product.mgmt.controller;
 
-import com.common.service.dtos.PaginationCriteria;
 import com.common.service.dtos.ResponseDTO;
 import com.product.mgmt.repository.dto.ProductDTO;
+import com.product.mgmt.repository.dto.ProductPageResponse;
 import com.product.mgmt.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import com.common.service.dtos.PaginationCriteria;
 
 import java.util.List;
 
@@ -44,9 +45,13 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    @PostMapping(path = "/products-with-pagination", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<ProductDTO> getProductsWithPagination(@RequestBody PaginationCriteria paginationCriteria) {
-        return productService.getProductsWithPagination(paginationCriteria);
+    @PostMapping(path = "/products-with-pagination", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProductPageResponse getProducts(@RequestBody PaginationCriteria paginationCriteria) {
+
+        return productService.getProducts(
+                paginationCriteria.getPageSize(),
+                paginationCriteria.getPageState()
+        );
     }
 
 

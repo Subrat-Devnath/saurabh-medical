@@ -39,6 +39,9 @@ public class ProductPurchaceHistoryEntity implements Serializable {
     @Column("sold_quantity")
     private Long soldQuantity;
 
+    @Column("supplier_name")
+    private String supplierName;
+
     /// --------- Base entity fields ---------
     @Column("is_deleted")
     private boolean isDeleted;

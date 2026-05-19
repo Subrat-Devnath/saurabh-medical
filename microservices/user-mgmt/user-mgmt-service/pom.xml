@@ -36,6 +36,12 @@
 
 		<dependency>
 			<groupId>subrat-code-base</groupId>
+			<artifactId>email-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>subrat-code-base</groupId>
 			<artifactId>common-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>

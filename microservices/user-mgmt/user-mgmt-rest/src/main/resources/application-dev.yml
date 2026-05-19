@@ -39,8 +39,9 @@ product:
   contextPath: "/product-mgmt"
   url: "http://127.0.0.1:8082"
 
-app:
-  master-salt: cc0b465e-c9a7-11ed-afa1-0242ac120002
+email:
+  contextPath: "/email"
+  url: "http://127.0.0.1:8085"
 
 security:
   contextPath: "/security"
@@ -76,3 +77,6 @@ security:
     # Domain for which cookie is valid
     # 'localhost' works for local dev, in prod use your actual domain (e.g., example.com)
     cookie-domain: localhost
+
+app:
+  master-salt: cc0b465e-c9a7-11ed-afa1-0242ac120002

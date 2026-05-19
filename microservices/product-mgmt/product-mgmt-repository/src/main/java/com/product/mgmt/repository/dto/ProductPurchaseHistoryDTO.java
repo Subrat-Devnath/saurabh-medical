@@ -1,7 +1,6 @@
 package com.product.mgmt.repository.dto;
 
 import lombok.Data;
-import org.springframework.data.cassandra.core.mapping.Column;
 
 import java.io.Serializable;
 
@@ -10,7 +9,7 @@ public class ProductPurchaseHistoryDTO implements Serializable {
 
     private String productName;
 
-    private Long purchasedate;
+    private Long purchaseDate;
 
     private Long listPrice;
 
@@ -27,6 +26,8 @@ public class ProductPurchaseHistoryDTO implements Serializable {
     private Long remainingQuantity;
 
     private Long soldQuantity;
+
+    private String supplierName;
 
     private boolean isDeleted = false;
 

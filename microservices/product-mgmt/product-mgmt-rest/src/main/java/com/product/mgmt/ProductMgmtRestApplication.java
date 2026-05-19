@@ -8,7 +8,6 @@ import org.springframework.data.cassandra.repository.config.EnableCassandraRepos
 
 @SpringBootApplication(scanBasePackages = {"com.product.mgmt", "com.security.config"})
 @EnableEurekaClient
-@EnableFeignClients(basePackages = "com.user.mgmt.client")
 @EnableCassandraRepositories(basePackages = "com.product.mgmt.repository.dao")
 public class ProductMgmtRestApplication {
 

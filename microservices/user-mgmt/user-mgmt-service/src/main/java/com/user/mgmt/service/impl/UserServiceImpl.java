@@ -162,11 +162,12 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("User not found");
         }
 
-        // Decrypting the password and matching with the stored hash
-        String hash = webSecurityConfig.passwordEncoder().encode(loginRequest.getPassword());
+        // Stored hashed password from DB
+        String storedPasswordHash = userByUserName.getPassword();
 
-        // Matching the raw password with the stored hash
-        boolean match = webSecurityConfig.passwordEncoder().matches(loginRequest.getPassword(), hash);
+        // Correct comparison
+        boolean match = webSecurityConfig.passwordEncoder()
+                .matches(loginRequest.getPassword(), storedPasswordHash);
 
         if (match) {
             return userByUserName;
@@ -248,7 +249,7 @@ public class UserServiceImpl implements UserService {
             PasswordResetOtpEntity otpEntity = new PasswordResetOtpEntity(
                     userEntity,
                     otp,
-                    LocalDateTime.now().plusMinutes(10)
+                    LocalDateTime.now().plusMinutes(3)
             );
 
             // Save OTP to database
@@ -392,11 +393,12 @@ public class UserServiceImpl implements UserService {
                 "<p>Dear " + userName + ",</p>" +
                 "<p>You have requested to reset your password. Please use the following OTP to proceed:</p>" +
                 "<h1 style='color: #0066cc;'>" + otp + "</h1>" +
-                "<p>This OTP is valid for 10 minutes.</p>" +
+                "<p>This OTP is valid for 3 minutes.</p>" +
                 "<p>If you did not request this, please ignore this email.</p>" +
                 "<p>Best regards,<br>Saurabh Medical Team</p>" +
                 "</body></html>"
         );
+        notificationDTO.setHtml(true);
         notificationDTO.setFrom("noreply@saurabh-medical.com");
 
         emailClient.sendEmailWithAttachment(notificationDTO);

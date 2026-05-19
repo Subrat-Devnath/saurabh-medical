@@ -19,7 +19,7 @@ public class ProductPrinter implements CommandLineRunner {
 		System.out.println("===== Printing All Environment Variables =====");
 
 		if (environment instanceof ConfigurableEnvironment configurableEnv) {
-			configurableEnv.getSystemEnvironment().forEach((key, value) -> System.out.println(key + "=" + value));
+			//configurableEnv.getSystemEnvironment().forEach((key, value) -> System.out.println(key + "=" + value));
 		}
 	}
 }

@@ -34,6 +34,11 @@ product:
   contextPath: "/product-mgmt"
   url: "http://127.0.0.1:8082"
 
+
+email:
+  contextPath: "/email"
+  url: "http://127.0.0.1:8085"
+
 security:
   contextPath: "/security"
   url: "http://127.0.0.1:8084"

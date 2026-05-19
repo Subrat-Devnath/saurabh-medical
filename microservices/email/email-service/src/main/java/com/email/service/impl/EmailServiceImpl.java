@@ -27,10 +27,19 @@ public class EmailServiceImpl implements EmailService {
         helper.setFrom(notificationDTO.getFrom());
         helper.setTo(notificationDTO.getTo());
         helper.setSubject(notificationDTO.getSubject());
-        helper.setText(notificationDTO.getMessage());
+        if(notificationDTO.isHtml()){
+            helper.setText(notificationDTO.getMessage(), true);
+        } else {
+            helper.setText(notificationDTO.getMessage());
+        }
 
-        helper.setCc(notificationDTO.getCc());
-        helper.setBcc(notificationDTO.getBcc());
+        if (notificationDTO.getCc() != null && !notificationDTO.getCc().trim().isEmpty()) {
+            helper.setCc(notificationDTO.getCc().split(","));
+        }
+
+        if (notificationDTO.getBcc() != null && !notificationDTO.getBcc().trim().isEmpty()) {
+            helper.setBcc(notificationDTO.getBcc().split(","));
+        }
 
         /*// Attach file
         FileSystemResource file = new FileSystemResource(new File("C:/file/test.pdf"));

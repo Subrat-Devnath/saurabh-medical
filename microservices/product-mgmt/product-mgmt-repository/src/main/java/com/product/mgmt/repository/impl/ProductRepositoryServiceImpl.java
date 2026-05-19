@@ -31,14 +31,17 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
     @Autowired
     private ProductPurchaceHistoryDAO productPurchaceHistoryDAO;
 
+
     @Override
     public void addProduct(ProductDTO productDto) {
 
-        //Set current date as purchase date for the product
-        productDto.setPurchasedate(java.time.LocalDate.now()
-                .atStartOfDay(java.time.ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli());
+        if (productDto.getPurchaseDate() == null) {
+            //Set current date as purchase date for the product
+            productDto.setPurchaseDate(java.time.LocalDate.now()
+                    .atStartOfDay(java.time.ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli());
+        }
 
         ProductEntity entity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductEntity.class);
         ProductEntityId productEntityId = new ProductEntityId();
@@ -50,7 +53,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
         ProductPurchaceHistoryEntityId productPurchaceHistoryEntityId = new ProductPurchaceHistoryEntityId();
         productPurchaceHistoryEntityId.setOrganizationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
         productPurchaceHistoryEntityId.setProductName(productDto.getProductName().toUpperCase());
-        productPurchaceHistoryEntityId.setPurchaseDate(productDto.getPurchasedate());
+        productPurchaceHistoryEntityId.setPurchaseDate(productDto.getPurchaseDate());
 
         ProductPurchaceHistoryEntity productPurchaceHistoryEntity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductPurchaceHistoryEntity.class);
 
@@ -113,22 +116,6 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
         }
 
         return allProducts.stream().filter(entity -> !entity.isDeleted()).map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductEntityId(), ProductDTO.class)).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ProductDTO> getProductsWithPagination(PaginationCriteria paginationCriteria) {
-
-        if (Objects.isNull(paginationCriteria)) {
-            return List.of();
-        }
-
-        List<ProductEntity> products = productDao.getProductsWithPagination(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId(), PageRequest.of(paginationCriteria.getStartIndex().intValue(), paginationCriteria.getPageSize().intValue()));
-
-        if (CollectionUtils.isEmpty(products)) {
-            return List.of();
-        }
-
-        return products.stream().filter(entity -> !entity.isDeleted()).map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductEntityId(), ProductDTO.class)).collect(Collectors.toList());
     }
 
 }

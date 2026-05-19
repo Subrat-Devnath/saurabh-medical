@@ -17,6 +17,4 @@ public interface ProductRepository {
 
     List<ProductDTO> getAllProducts();
 
-    List<ProductDTO> getProductsWithPagination(PaginationCriteria paginationCriteria);
-
 }

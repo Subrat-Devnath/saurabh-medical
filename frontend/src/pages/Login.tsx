@@ -1,90 +1,69 @@
-import { useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 function Login() {
+    const navigate = useNavigate();
 
-    const navigate = useNavigate()
+    const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const [showPassword, setShowPassword] = useState(false)
-
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-        e.preventDefault()
-
-        setLoading(true)
-        setError("")
+        setLoading(true);
+        setError("");
 
         try {
-
             const response = await fetch("http://localhost:8079/security/api/v1/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     userName: email,
                     password: password,
                 }),
-            })
+            });
 
-            const data = await response.json()
-
-            /*
-                Expected backend response example:
-
-                {
-                    "accessToken": "abcd1234",
-                    "refreshToken": "efgh5678"
-                }
-            */
+            const data = await response.json();
 
             if (data.accessToken) {
+                localStorage.setItem("accessToken", data.accessToken);
+                localStorage.setItem("refreshToken", data.refreshToken);
+                localStorage.setItem("userEmail", email);
 
-                localStorage.setItem("accessToken", data.accessToken)
-                localStorage.setItem("refreshToken", data.refreshToken)
-
-
-                // navigate to home page
-                navigate("/home")
-
+                navigate("/home");
             } else {
-
-                setError("Invalid email or password")
-
+                setError("Invalid email or password");
             }
-
         } catch (err) {
-
-            console.error(err)
-
-            setError("Server error. Please try again.")
-
+            console.error(err);
+            setError("Server error. Please try again.");
         } finally {
-
-            setLoading(false)
-
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <div className="min-h-screen bg-black text-white relative overflow-hidden flex items-center justify-center px-6 py-10">
 
+            {/* Background effects */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#0891b2_0%,transparent_25%),radial-gradient(circle_at_bottom_left,#7c3aed_0%,transparent_25%)] opacity-30" />
-
             <div className="absolute w-[500px] h-[500px] bg-cyan-500/20 blur-3xl rounded-full -top-32 -right-20" />
             <div className="absolute w-[500px] h-[500px] bg-purple-500/20 blur-3xl rounded-full -bottom-32 -left-20" />
 
-            <div className="relative z-10 w-full max-w-md">
-
+            {/* ANIMATED CARD */}
+            <motion.div
+                initial={{ opacity: 0, y: -100 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md"
+            >
                 <div className="bg-white/5 border border-white/10 backdrop-blur-2xl rounded-3xl p-8 shadow-2xl shadow-cyan-500/10">
 
+                    {/* HEADER */}
                     <div className="text-center mb-8">
 
                         <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/40 mb-5">
@@ -97,10 +76,10 @@ function Login() {
 
                     </div>
 
+                    {/* FORM */}
                     <form className="space-y-6" onSubmit={handleLogin}>
 
                         <div>
-
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                                 Email ID
                             </label>
@@ -112,28 +91,25 @@ function Login() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 outline-none focus:border-cyan-500 transition text-white placeholder:text-gray-500"
                             />
-
                         </div>
 
                         <div>
 
                             <div className="flex items-center justify-between mb-2">
-
                                 <label className="text-sm font-medium text-gray-300">
                                     Password
                                 </label>
 
                                 <button
                                     type="button"
+                                    onClick={() => navigate("/forgot-password")}
                                     className="text-xs text-cyan-400 hover:text-cyan-300 transition"
                                 >
                                     Forgot Password?
                                 </button>
-
                             </div>
 
                             <div className="relative">
-
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Enter your password"
@@ -149,7 +125,6 @@ function Login() {
                                 >
                                     {showPassword ? "🙈" : "👁"}
                                 </button>
-
                             </div>
 
                         </div>
@@ -171,9 +146,7 @@ function Login() {
                     </form>
 
                     <p className="text-center text-gray-500 text-sm mt-8">
-
                         Don't have an account?
-
                         <button
                             type="button"
                             onClick={() => navigate("/signup")}
@@ -181,15 +154,13 @@ function Login() {
                         >
                             Create Account
                         </button>
-
                     </p>
 
                 </div>
-
-            </div>
+            </motion.div>
 
         </div>
-    )
+    );
 }
 
-export default Login
+export default Login;
