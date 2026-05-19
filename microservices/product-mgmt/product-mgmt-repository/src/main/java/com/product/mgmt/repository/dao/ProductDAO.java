@@ -23,4 +23,7 @@ public interface ProductDAO extends CassandraRepository<ProductEntity, ProductEn
 
     @Query("SELECT * FROM product WHERE organization_id = ?0 AND product_name >= ?1 AND product_name < ?2")
     Slice<ProductEntity> searchProductsWithPagination(String organizationId, String start, String end, CassandraPageRequest cassandraPageRequest);
+
+    @Query("select product_quantity from product where organization_id = ?0 and product_name = ?1")
+    Long getProductQuantity(String organizationId, String productName);
 }

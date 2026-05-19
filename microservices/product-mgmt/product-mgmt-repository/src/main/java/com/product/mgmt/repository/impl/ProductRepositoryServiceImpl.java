@@ -257,4 +257,12 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 
         return response;
     }
+
+    @Override
+    public Long getProductQuantity(String organizationId, String productName) {
+        if (!StringUtils.hasLength(productName)) {
+            return null;
+        }
+        return productDao.getProductQuantity(organizationId, productName.toUpperCase());
+    }
 }

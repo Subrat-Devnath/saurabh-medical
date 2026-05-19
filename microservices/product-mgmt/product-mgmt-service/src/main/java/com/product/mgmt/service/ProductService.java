@@ -21,4 +21,10 @@ public interface ProductService {
     ProductPageResponse getProductsByOrganizationId(String organizationId, Integer pageSize, String pageState);
 
     ProductPageResponse searchProductWithPagination(String organizationId, String productName, Integer pageSize, String pageState);
+
+    /**
+     * Get product quantity by product name
+     * Returns only the product_quantity field
+     */
+    Long getProductQuantity(String organizationId, String productName);
 }

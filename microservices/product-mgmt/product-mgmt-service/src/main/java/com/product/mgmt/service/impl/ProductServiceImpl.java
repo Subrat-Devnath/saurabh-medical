@@ -26,6 +26,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void addProduct(ProductDTO productDto) {
+        productDto.setProductQuantity(productDto.getPurchasedQuantity());
+        Long productQuantity = productRepository.getProductQuantity(SecurityUtil.getPrincipal().getOrgId(), productDto.getProductName().toUpperCase());
+        if (productQuantity != null) {
+            productDto.setProductQuantity(productDto.getProductQuantity() + productQuantity);
+        }
         productDto.setBuyDiscount(DiscountCalculatorUtil.calculateBuyDiscountPercentage(productDto.getListPrice(), productDto.getBuyPrice()));
         productDto.setSellDiscount(DiscountCalculatorUtil.calculateSellDiscountPercentage(productDto.getListPrice(), productDto.getSellPrice()));
         productRepository.addProduct(productDto);
@@ -97,6 +102,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductPageResponse searchProductWithPagination(String organizationId, String productName, Integer pageSize, String pageState) {
         return productRepository.searchProductWithPagination(organizationId, productName, pageSize, pageState);
+    }
+
+    @Override
+    public Long getProductQuantity(String organizationId, String productName) {
+        return productRepository.getProductQuantity(organizationId, productName);
     }
 
 }

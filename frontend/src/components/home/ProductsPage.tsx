@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 type Product = {
     productName: string;
+    productQuantity: number;
     category: string;
 };
 
@@ -33,9 +34,7 @@ function ProductsPage() {
     // pricing
     const [listPrice, setListPrice] = useState(""); // MRP
     const [buyPrice, setBuyPrice] = useState("");
-    const [buyDiscount, setBuyDiscount] = useState("");
     const [sellPrice, setSellPrice] = useState("");
-    const [sellDiscount, setSellDiscount] = useState("");
 
     // dates
     const [purchaseDate, setPurchaseDate] = useState("");
@@ -171,9 +170,7 @@ function ProductsPage() {
 
         setListPrice("");
         setBuyPrice("");
-        setBuyDiscount("");
         setSellPrice("");
-        setSellDiscount("");
 
         setPurchaseDate("");
         setExpiryDate("");
@@ -216,10 +213,8 @@ function ProductsPage() {
                 // pricing
                 listPrice: Number(listPrice), // MRP
                 buyPrice: Number(buyPrice),
-                buyDiscount: Number(buyDiscount),
-
                 sellPrice: Number(sellPrice),
-                sellDiscount: Number(sellDiscount),
+
 
                 purchaseDate: purchaseEpoch,
                 expiryDate: expiryEpoch,
@@ -403,6 +398,11 @@ function ProductsPage() {
 
                         </button>
 
+
+                        <div className="text-green-400 text-sm mt-1">
+                            Quantity: {p.productQuantity}
+                        </div>
+
                         <div className="text-right text-purple-400 font-medium">
                             Product Type: {p.category}
                         </div>
@@ -494,30 +494,12 @@ function ProductsPage() {
                                 className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
                             />
 
-                            {/* BUY DISCOUNT */}
-                            <input
-                                type="number"
-                                placeholder="Buy Discount %"
-                                value={buyDiscount}
-                                onChange={(e) => setBuyDiscount(e.target.value)}
-                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
-                            />
-
                             {/* SELL PRICE */}
                             <input
                                 type="number"
                                 placeholder="Sell Price"
                                 value={sellPrice}
                                 onChange={(e) => setSellPrice(e.target.value)}
-                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
-                            />
-
-                            {/* SELL DISCOUNT */}
-                            <input
-                                type="number"
-                                placeholder="Sell Discount %"
-                                value={sellDiscount}
-                                onChange={(e) => setSellDiscount(e.target.value)}
                                 className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
                             />
 

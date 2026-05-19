@@ -9,6 +9,8 @@ public class ProductDTO extends ProductPurchaseHistoryDTO {
 
     private Long totalQuantity;
 
+    private Long productQuantity;
+    
     private String category;
 
 }

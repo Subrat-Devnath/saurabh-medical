@@ -16,6 +16,9 @@ public class ProductEntity {
     @Column("category")
     private String category;
 
+    @Column("product_quantity")
+    private Long productQuantity;
+
     /// --------- Base entity fields ---------
     @Column("is_deleted")
     private boolean isDeleted;

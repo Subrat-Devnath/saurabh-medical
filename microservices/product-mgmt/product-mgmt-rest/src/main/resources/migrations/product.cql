@@ -3,6 +3,7 @@ CREATE KEYSPACE main_db WITH replication = {'class': 'SimpleStrategy', 'replicat
 CREATE TABLE product (
     organization_id  text,
     product_name  text,
+    product_quantity bigint,
     category      text,
     is_deleted    boolean,
     is_expired    boolean,

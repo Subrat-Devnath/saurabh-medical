@@ -59,4 +59,9 @@ public class ProductController {
         return productService.searchProductWithPagination(SecurityUtil.getPrincipal().getOrgId(), productName, paginationCriteria.getPageSize(), paginationCriteria.getPageState());
     }
 
+    @GetMapping(path = "/product-quantity/{productName}")
+    public Long getProductQuantity(@PathVariable(name = "productName") String productName) {
+        return productService.getProductQuantity(SecurityUtil.getPrincipal().getOrgId(), productName);
+    }
+
 }
