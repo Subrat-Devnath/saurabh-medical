@@ -376,15 +376,32 @@ function ProductsPage() {
             )}
 
             {/* PRODUCTS */}
-            <div className="grid gap-4">
+            <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
 
+                {/* HEADER */}
+                <div className="grid grid-cols-3 bg-cyan-700 text-white font-semibold p-4">
+
+                    <div>Product Name</div>
+
+                    <div className="text-center">
+                        Quantity
+                    </div>
+
+                    <div className="text-right">
+                        Product Type
+                    </div>
+
+                </div>
+
+                {/* ROWS */}
                 {products.map((p, index) => (
 
                     <div
                         key={index}
-                        className="bg-white/5 border border-white/10 rounded-2xl p-4 flex justify-between"
+                        className="grid grid-cols-3 items-center p-4 border-t border-white/10 bg-white/5 hover:bg-white/10 transition"
                     >
 
+                        {/* PRODUCT NAME */}
                         <button
                             onClick={() =>
                                 navigate(`/purchase-history/${p.productName}`)
@@ -392,19 +409,20 @@ function ProductsPage() {
                             className="text-left"
                         >
 
-                            <h2 className="text-lg font-semibold text-cyan-300 hover:text-cyan-400 transition">
+                            <span className="text-cyan-300 font-medium hover:text-cyan-400">
                                 {p.productName}
-                            </h2>
+                            </span>
 
                         </button>
 
-
-                        <div className="text-green-400 text-sm mt-1">
-                            Quantity: {p.productQuantity}
+                        {/* QUANTITY */}
+                        <div className="text-center text-green-400 font-medium">
+                            {p.productQuantity}
                         </div>
 
+                        {/* CATEGORY */}
                         <div className="text-right text-purple-400 font-medium">
-                            Product Type: {p.category}
+                            {p.category}
                         </div>
 
                     </div>
@@ -412,7 +430,6 @@ function ProductsPage() {
                 ))}
 
             </div>
-
             {/* PAGINATION */}
             <div className="flex justify-center gap-4 mt-8">
 
