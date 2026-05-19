@@ -2,9 +2,9 @@ package com.product.mgmt.repository.impl;
 
 import com.common.service.configuration.ObjectBuilder;
 import com.product.mgmt.repository.ProductPurchaceHistoryRepository;
-import com.product.mgmt.repository.dao.ProductPurchaceHistoryDAO;
+import com.product.mgmt.repository.dao.ProductPurchaseHistoryDAO;
 import com.product.mgmt.repository.dto.ProductPurchaseHistoryDTO;
-import com.product.mgmt.repository.entity.ProductPurchaceHistoryEntity;
+import com.product.mgmt.repository.entity.ProductPurchaseHistoryEntity;
 import com.security.config.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class ProductPurchaceHistoryRepositoryImpl implements ProductPurchaceHistoryRepository {
 
     @Autowired
-    private ProductPurchaceHistoryDAO productPurchaceHistoryDAO;
+    private ProductPurchaseHistoryDAO productPurchaceHistoryDAO;
 
     @Override
     public List<ProductPurchaseHistoryDTO> getProductPurchaceHistory(String productName) {
@@ -28,23 +28,23 @@ public class ProductPurchaceHistoryRepositoryImpl implements ProductPurchaceHist
             return List.of();
         }
 
-        List<ProductPurchaceHistoryEntity> productPrices = productPurchaceHistoryDAO.getProductPrices(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId(), productName.toUpperCase());
+        List<ProductPurchaseHistoryEntity> productPrices = productPurchaceHistoryDAO.getProductPrices(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId(), productName.toUpperCase());
 
         if (CollectionUtils.isEmpty(productPrices)) {
             return List.of();
         }
 
-        return productPrices.stream().filter(entity -> !entity.isDeleted()).map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductPurchaceHistoryEntityId(), ProductPurchaseHistoryDTO.class)).collect(Collectors.toList());
+        return productPrices.stream().filter(entity -> !entity.isDeleted()).map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductPurchaseHistoryEntityId(), ProductPurchaseHistoryDTO.class)).collect(Collectors.toList());
     }
 
     @Override
     public List<ProductPurchaseHistoryDTO> getProductQuantities(List<String> productNames) {
-        List<ProductPurchaceHistoryEntity> productPrices = productPurchaceHistoryDAO.getProductQuantities(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId(), productNames);
+        List<ProductPurchaseHistoryEntity> productPrices = productPurchaceHistoryDAO.getProductQuantities(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId(), productNames);
 
         if (CollectionUtils.isEmpty(productPrices)) {
             return List.of();
         }
 
-        return productPrices.stream().filter(entity -> !entity.isDeleted()).map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductPurchaceHistoryEntityId(), ProductPurchaseHistoryDTO.class)).collect(Collectors.toList());
+        return productPrices.stream().filter(entity -> !entity.isDeleted()).map(entity -> ObjectBuilder.buildDtoFromEntity(entity, entity.getProductPurchaseHistoryEntityId(), ProductPurchaseHistoryDTO.class)).collect(Collectors.toList());
     }
 }

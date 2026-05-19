@@ -20,6 +20,27 @@ function ProductsPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    // add product modal
+    const [showAddModal, setShowAddModal] = useState(false);
+
+    // form
+    const [productName, setProductName] = useState("");
+    const [category, setCategory] = useState("");
+    const [supplierName, setSupplierName] = useState("");
+
+    const [totalQuantity, setTotalQuantity] = useState("");
+
+    // pricing
+    const [listPrice, setListPrice] = useState(""); // MRP
+    const [buyPrice, setBuyPrice] = useState("");
+    const [buyDiscount, setBuyDiscount] = useState("");
+    const [sellPrice, setSellPrice] = useState("");
+    const [sellDiscount, setSellDiscount] = useState("");
+
+    // dates
+    const [purchaseDate, setPurchaseDate] = useState("");
+    const [expiryDate, setExpiryDate] = useState("");
+
     // Cassandra paging state
     const [pageState, setPageState] = useState<string | null>(null);
 
@@ -68,16 +89,10 @@ function ProductsPage() {
 
             const data: ProductPageResponse = await response.json();
 
-            // populate grid
             setProducts(data.products || []);
-
-            // save next page state
             setPageState(data.nextPageState);
-
-            // next button control
             setHasNext(data.hasNext);
 
-            // maintain history for prev button
             if (isNext && nextState) {
                 setPageStateStack((prev) => [...prev, nextState]);
             }
@@ -127,16 +142,10 @@ function ProductsPage() {
 
             const data: ProductPageResponse = await response.json();
 
-            // populate grid
             setProducts(data.products || []);
-
-            // next page state
             setPageState(data.nextPageState);
-
-            // next button control
             setHasNext(data.hasNext);
 
-            // prev history
             if (isNext && nextState) {
                 setPageStateStack((prev) => [...prev, nextState]);
             }
@@ -151,8 +160,108 @@ function ProductsPage() {
         }
     };
 
+    // ---------------- RESET FORM ----------------
+    const resetForm = () => {
+
+        setProductName("");
+        setCategory("");
+        setSupplierName("");
+
+        setTotalQuantity("");
+
+        setListPrice("");
+        setBuyPrice("");
+        setBuyDiscount("");
+        setSellPrice("");
+        setSellDiscount("");
+
+        setPurchaseDate("");
+        setExpiryDate("");
+    };
+
+    // ---------------- ADD PRODUCT ----------------
+    const addProduct = async () => {
+
+        try {
+
+            setLoading(true);
+            setError("");
+
+            const token = localStorage.getItem("accessToken");
+
+            // convert date -> epoch
+            const purchaseEpoch =
+                purchaseDate
+                    ? new Date(purchaseDate).getTime()
+                    : null;
+
+            const expiryEpoch =
+                expiryDate
+                    ? new Date(expiryDate).getTime()
+                    : null;
+
+            const quantity = Number(totalQuantity);
+
+            const payload = {
+
+                productName,
+                category,
+                supplierName,
+
+                totalQuantity: quantity,
+                purchasedQuantity: quantity,
+                remainingQuantity: quantity,
+                soldQuantity: 0,
+
+                // pricing
+                listPrice: Number(listPrice), // MRP
+                buyPrice: Number(buyPrice),
+                buyDiscount: Number(buyDiscount),
+
+                sellPrice: Number(sellPrice),
+                sellDiscount: Number(sellDiscount),
+
+                purchaseDate: purchaseEpoch,
+                expiryDate: expiryEpoch,
+            };
+
+            const response = await fetch(
+                `${API}/product`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to add product");
+            }
+
+            resetForm();
+
+            setShowAddModal(false);
+
+            fetchProducts(null, false);
+
+        } catch (err: any) {
+
+            setError(err.message || "Add product failed");
+
+        } finally {
+
+            setLoading(false);
+        }
+    };
+
     // ---------------- SEARCH HANDLER ----------------
     const handleSearch = () => {
+
+        setPageState(null);
+        setPageStateStack([]);
 
         if (searchText.trim() === "") {
 
@@ -160,7 +269,7 @@ function ProductsPage() {
 
         } else {
 
-            searchProduct(searchText);
+            searchProduct(searchText, null, false);
         }
     };
 
@@ -172,8 +281,17 @@ function ProductsPage() {
     // ---------------- NEXT PAGE ----------------
     const handleNext = () => {
 
-        if (hasNext && pageState) {
+        if (!hasNext || !pageState) {
+            return;
+        }
+
+        if (searchText.trim() === "") {
+
             fetchProducts(pageState, true);
+
+        } else {
+
+            searchProduct(searchText, pageState, true);
         }
     };
 
@@ -182,28 +300,47 @@ function ProductsPage() {
 
         const stack = [...pageStateStack];
 
-        // remove current
         stack.pop();
 
         const prevState =
-            stack.length > 0 ? stack[stack.length - 1] : null;
+            stack.length > 0
+                ? stack[stack.length - 1]
+                : null;
 
         setPageStateStack(stack);
 
-        fetchProducts(prevState, false);
+        if (searchText.trim() === "") {
+
+            fetchProducts(prevState, false);
+
+        } else {
+
+            searchProduct(searchText, prevState, false);
+        }
     };
 
     return (
 
         <div className="min-h-screen bg-black text-white p-6">
 
-            {/* BACK */}
-            <button
-                onClick={() => navigate("/home")}
-                className="mb-6 px-4 py-2 rounded-xl bg-white/10 border border-white/10 hover:bg-white/20"
-            >
-                ← Back
-            </button>
+            {/* TOP BAR */}
+            <div className="flex justify-between items-center mb-6">
+
+                <button
+                    onClick={() => navigate("/home")}
+                    className="px-4 py-2 rounded-xl bg-white/10 border border-white/10 hover:bg-white/20"
+                >
+                    ← Back
+                </button>
+
+                <button
+                    onClick={() => setShowAddModal(true)}
+                    className="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-500"
+                >
+                    + Add Product
+                </button>
+
+            </div>
 
             <h1 className="text-3xl font-bold text-cyan-400 mb-6">
                 Manage Products
@@ -224,12 +361,7 @@ function ProductsPage() {
 
                     <button
                         onClick={handleSearch}
-                        disabled={searchText.trim() === ""}
-                        className={`px-4 py-2 rounded-xl transition
-                        ${searchText.trim() === ""
-                                ? "bg-gray-600 cursor-not-allowed opacity-50"
-                                : "bg-cyan-600 hover:bg-cyan-500"
-                            }`}
+                        className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500"
                     >
                         Search
                     </button>
@@ -301,6 +433,155 @@ function ProductsPage() {
                 </button>
 
             </div>
+
+            {/* ADD PRODUCT MODAL */}
+            {showAddModal && (
+
+                <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
+
+                    <div className="bg-zinc-900 p-6 rounded-2xl w-[650px] border border-white/10">
+
+                        <h2 className="text-2xl font-bold text-cyan-400 mb-6">
+                            Add Product
+                        </h2>
+
+                        <div className="grid grid-cols-2 gap-4">
+
+                            <input
+                                placeholder="Product Name"
+                                value={productName}
+                                onChange={(e) => setProductName(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            <input
+                                placeholder="Category"
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            <input
+                                placeholder="Supplier Name"
+                                value={supplierName}
+                                onChange={(e) => setSupplierName(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            <input
+                                type="number"
+                                placeholder="Total Quantity"
+                                value={totalQuantity}
+                                onChange={(e) => setTotalQuantity(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            {/* MRP */}
+                            <input
+                                type="number"
+                                placeholder="MRP / List Price"
+                                value={listPrice}
+                                onChange={(e) => setListPrice(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            {/* BUY PRICE */}
+                            <input
+                                type="number"
+                                placeholder="Buy Price"
+                                value={buyPrice}
+                                onChange={(e) => setBuyPrice(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            {/* BUY DISCOUNT */}
+                            <input
+                                type="number"
+                                placeholder="Buy Discount %"
+                                value={buyDiscount}
+                                onChange={(e) => setBuyDiscount(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            {/* SELL PRICE */}
+                            <input
+                                type="number"
+                                placeholder="Sell Price"
+                                value={sellPrice}
+                                onChange={(e) => setSellPrice(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            {/* SELL DISCOUNT */}
+                            <input
+                                type="number"
+                                placeholder="Sell Discount %"
+                                value={sellDiscount}
+                                onChange={(e) => setSellDiscount(e.target.value)}
+                                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                            />
+
+                            {/* PURCHASE DATE */}
+                            <div>
+
+                                <label className="text-sm text-gray-300">
+                                    Purchase Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    value={purchaseDate}
+                                    onChange={(e) => setPurchaseDate(e.target.value)}
+                                    className="w-full mt-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                                />
+
+                            </div>
+
+                            {/* EXPIRY DATE */}
+                            <div>
+
+                                <label className="text-sm text-gray-300">
+                                    Expiry Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    value={expiryDate}
+                                    onChange={(e) => setExpiryDate(e.target.value)}
+                                    className="w-full mt-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10"
+                                />
+
+                            </div>
+
+                        </div>
+
+                        {/* ACTIONS */}
+                        <div className="flex justify-end gap-3 mt-6">
+
+                            <button
+                                onClick={() => {
+                                    resetForm();
+                                    setShowAddModal(false);
+                                }}
+                                className="px-4 py-2 rounded-xl bg-gray-700 hover:bg-gray-600"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={addProduct}
+                                className="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-500"
+                            >
+                                Save Product
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            )}
 
         </div>
     );

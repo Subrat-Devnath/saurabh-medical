@@ -9,145 +9,145 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author subrat
- *         <p>
- *         D stands for DTO
- *         </p>
- *         <p>
- *         E stands for Entity
- *         </p>
- *         <p>
- *         Build D(DTO) from E(Entity)
- *         </p>
- *         <p>
- *         Build E(Entity) from D(DTO)
- *         </p>
+ * <p>
+ * D stands for DTO
+ * </p>
+ * <p>
+ * E stands for Entity
+ * </p>
+ * <p>
+ * Build D(DTO) from E(Entity)
+ * </p>
+ * <p>
+ * Build E(Entity) from D(DTO)
+ * </p>
  */
 public class ObjectBuilder {
 
-	private static Logger logger = LoggerFactory.getLogger(ObjectBuilder.class);
+    private static Logger logger = LoggerFactory.getLogger(ObjectBuilder.class);
 
-	/**
-	 * <p>
-	 * THis method is replacement to buildDtoFromEntity methods that we write in
-	 * each micro service,
-	 * </p>
-	 * <p>
-	 * we no more need to write those method again
-	 * </p>
-	 * <p>
-	 * E stands for entity
-	 * <p/>
-	 * <p>
-	 * I stands for entityId
-	 * <p/>
-	 * 
-	 * @param E(entity)
-	 * @param I(entityId) entityId of same entity
-	 * @param outClass
-	 * @return
-	 */
-	public static <D, E, I> D buildDtoFromEntity(final E entity, final I entityId, Class<D> outClass) {
-		return buildDtoFromEntity(null, entity, entityId, outClass);
-	}
+    /**
+     * <p>
+     * THis method is replacement to buildDtoFromEntity methods that we write in
+     * each micro service,
+     * </p>
+     * <p>
+     * we no more need to write those method again
+     * </p>
+     * <p>
+     * E stands for entity
+     * <p/>
+     * <p>
+     * I stands for entityId
+     * <p/>
+     *
+     * @param E(entity)
+     * @param I(entityId) entityId of same entity
+     * @param outClass
+     * @return
+     */
+    public static <D, E, I> D buildDtoFromEntity(final E entity, final I entityId, Class<D> outClass) {
+        return buildDtoFromEntity(null, entity, entityId, outClass);
+    }
 
-	/**
-	 * <p>
-	 * This method is replacement to buildDtoFromEntity methods that we write in
-	 * each micro service,
-	 * </p>
-	 * <p>
-	 * Use this method if you build LIST of DTO in loop
-	 * </p>
-	 * <p>
-	 * we no more need to write those method again
-	 * </p>
-	 * <p>
-	 * E stands for entity
-	 * <p/>
-	 * <p>
-	 * I stands for entityId
-	 * <p/>
-	 * 
-	 * @param E(entity)
-	 * @param I(entityId) entityId of same entity
-	 * @param outClass
-	 * @return
-	 */
-	public static <D, E, I> D buildDtoFromEntity(ModelMapper modelMapper, final E entity, final I entityId,
-			Class<D> outClass) {
+    /**
+     * <p>
+     * This method is replacement to buildDtoFromEntity methods that we write in
+     * each micro service,
+     * </p>
+     * <p>
+     * Use this method if you build LIST of DTO in loop
+     * </p>
+     * <p>
+     * we no more need to write those method again
+     * </p>
+     * <p>
+     * E stands for entity
+     * <p/>
+     * <p>
+     * I stands for entityId
+     * <p/>
+     *
+     * @param E(entity)
+     * @param I(entityId) entityId of same entity
+     * @param outClass
+     * @return
+     */
+    public static <D, E, I> D buildDtoFromEntity(ModelMapper modelMapper, final E entity, final I entityId, Class<D> outClass) {
 
-		if (entity == null) {
-			return null;
-		}
+        if (entity == null) {
+            return null;
+        }
 
-		if (entityId == null) {
-			/**
-			 * in case we dont have or dont want to add ID class in building dto
-			 */
-			return ObjectMapperUtils.map(modelMapper, entity, outClass);
-		} else {
-			return ObjectMapperUtils.map(modelMapper, entityId, ObjectMapperUtils.map(modelMapper, entity, outClass));
-		}
-	}
+        // First map entity -> dto
+        D dto = ObjectMapperUtils.map(modelMapper, entity, outClass);
 
-	public static void setNestedValue(Object target, String path, Object value) {
+        // Then map entityId -> same dto object
+        if (entityId != null) {
+            modelMapper.map(entityId, dto);
+        }
 
-		String[] parts = path.split("\\.");
-		Object current = target;
+        return dto;
+    }
 
-		try {
-			current = getNestedObject(parts, current);
+    public static void setNestedValue(Object target, String path, Object value) {
 
-			// set final field
-			Field finalField = current.getClass().getDeclaredField(parts[parts.length - 1]);
-			finalField.setAccessible(true);
-			Class<?> fieldType = finalField.getType();
-			Object convertedValue = convertStringToFieldType(value, fieldType);
-			finalField.set(current, convertedValue);
-		} catch (NoSuchFieldException | InvocationTargetException | IllegalAccessException | InstantiationException
-				| NoSuchMethodException e) {
-			logger.error("[setNestedValue]: exception in setting nested value for path: {}, {}", path, e);
-		}
-	}
+        String[] parts = path.split("\\.");
+        Object current = target;
 
-	private static Object getNestedObject(String[] parts, Object current) throws NoSuchFieldException,
-			IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-		for (int index = 0; index < parts.length - 1; index++) {
-			Field field = null;
+        try {
+            current = getNestedObject(parts, current);
 
-			field = current.getClass().getDeclaredField(parts[index]);
+            // set final field
+            Field finalField = current.getClass().getDeclaredField(parts[parts.length - 1]);
+            finalField.setAccessible(true);
+            Class<?> fieldType = finalField.getType();
+            Object convertedValue = convertStringToFieldType(value, fieldType);
+            finalField.set(current, convertedValue);
+        } catch (NoSuchFieldException | InvocationTargetException | IllegalAccessException | InstantiationException
+                 | NoSuchMethodException e) {
+            logger.error("[setNestedValue]: exception in setting nested value for path: {}, {}", path, e);
+        }
+    }
 
-			field.setAccessible(true);
-			Object nested = field.get(current);
+    private static Object getNestedObject(String[] parts, Object current) throws NoSuchFieldException,
+            IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+        for (int index = 0; index < parts.length - 1; index++) {
+            Field field = null;
 
-			// if nested object is null, create it
-			if (nested == null) {
-				nested = field.getType().getDeclaredConstructor().newInstance();
-				field.set(current, nested);
-			}
+            field = current.getClass().getDeclaredField(parts[index]);
 
-			current = nested;
-		}
-		return current;
-	}
+            field.setAccessible(true);
+            Object nested = field.get(current);
 
-	public static Object convertStringToFieldType(Object value, Class<?> type) {
+            // if nested object is null, create it
+            if (nested == null) {
+                nested = field.getType().getDeclaredConstructor().newInstance();
+                field.set(current, nested);
+            }
 
-		if (value == null || type == null)
-			return null;
+            current = nested;
+        }
+        return current;
+    }
 
-		if (type == String.class) {
-			return value.toString();
-		} else if (type == Long.class || type == long.class) {
-			return Long.parseLong(value.toString());
-		} else if (type == Integer.class || type == int.class) {
-			return Integer.parseInt(value.toString());
-		} else if (type == Double.class || type == double.class) {
-			return Double.parseDouble(value.toString());
-		} else if (type == Float.class || type == float.class) {
-			return Float.parseFloat(value.toString());
-		}
-		return value;
-	}
+    public static Object convertStringToFieldType(Object value, Class<?> type) {
+
+        if (value == null || type == null)
+            return null;
+
+        if (type == String.class) {
+            return value.toString();
+        } else if (type == Long.class || type == long.class) {
+            return Long.parseLong(value.toString());
+        } else if (type == Integer.class || type == int.class) {
+            return Integer.parseInt(value.toString());
+        } else if (type == Double.class || type == double.class) {
+            return Double.parseDouble(value.toString());
+        } else if (type == Float.class || type == float.class) {
+            return Float.parseFloat(value.toString());
+        }
+        return value;
+    }
 
 }

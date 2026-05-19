@@ -1,16 +1,15 @@
 package com.product.mgmt.repository.impl;
 
 import com.common.service.configuration.ObjectBuilder;
-import com.datastax.oss.driver.api.core.cql.PagingState;
 import com.product.mgmt.repository.ProductRepository;
 import com.product.mgmt.repository.dao.ProductDAO;
-import com.product.mgmt.repository.dao.ProductPurchaceHistoryDAO;
+import com.product.mgmt.repository.dao.ProductPurchaseHistoryDAO;
 import com.product.mgmt.repository.dto.ProductDTO;
 import com.product.mgmt.repository.dto.ProductPageResponse;
 import com.product.mgmt.repository.entity.ProductEntity;
 import com.product.mgmt.repository.entity.ProductEntityId;
-import com.product.mgmt.repository.entity.ProductPurchaceHistoryEntity;
-import com.product.mgmt.repository.entity.ProductPurchaceHistoryEntityId;
+import com.product.mgmt.repository.entity.ProductPurchaseHistoryEntity;
+import com.product.mgmt.repository.entity.ProductPurchaseHistoryEntityId;
 import com.security.config.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.cassandra.core.query.CassandraPageRequest;
@@ -31,7 +30,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
     private ProductDAO productDao;
 
     @Autowired
-    private ProductPurchaceHistoryDAO productPurchaceHistoryDAO;
+    private ProductPurchaseHistoryDAO productPurchaceHistoryDAO;
 
 
     @Override
@@ -42,6 +41,14 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
             productDto.setPurchaseDate(java.time.LocalDate.now().atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli());
         }
 
+        productDto.setCreatedUserId(SecurityUtil.getPrincipal().getUserId());
+        productDto.setCreatedUserName(SecurityUtil.getPrincipal().getUserName());
+        productDto.setCreatedDate(System.currentTimeMillis());
+
+        productDto.setUpdatedUserId(SecurityUtil.getPrincipal().getUserId());
+        productDto.setUpdatedUserName(SecurityUtil.getPrincipal().getUserName());
+        productDto.setUpdatedDate(System.currentTimeMillis());
+
         ProductEntity entity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductEntity.class);
         ProductEntityId productEntityId = new ProductEntityId();
         productEntityId.setOrganizationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
@@ -49,17 +56,22 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
         entity.setProductEntityId(productEntityId);
         productDao.save(entity);
 
-        ProductPurchaceHistoryEntityId productPurchaceHistoryEntityId = new ProductPurchaceHistoryEntityId();
-        productPurchaceHistoryEntityId.setOrganizationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
-        productPurchaceHistoryEntityId.setProductName(productDto.getProductName().toUpperCase());
-        productPurchaceHistoryEntityId.setPurchaseDate(productDto.getPurchaseDate());
+        ProductPurchaseHistoryEntityId productPurchaseHistoryEntityId = getProductPurchaseHistoryEntityId(productDto);
 
-        ProductPurchaceHistoryEntity productPurchaceHistoryEntity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductPurchaceHistoryEntity.class);
+        ProductPurchaseHistoryEntity productPurchaseHistoryEntity = ObjectBuilder.buildDtoFromEntity(productDto, null, ProductPurchaseHistoryEntity.class);
 
-        productPurchaceHistoryEntity.setProductPurchaceHistoryEntityId(productPurchaceHistoryEntityId);
+        productPurchaseHistoryEntity.setProductPurchaseHistoryEntityId(productPurchaseHistoryEntityId);
 
+        productPurchaceHistoryDAO.save(productPurchaseHistoryEntity);
+    }
 
-        productPurchaceHistoryDAO.save(productPurchaceHistoryEntity);
+    private ProductPurchaseHistoryEntityId getProductPurchaseHistoryEntityId(ProductDTO productDto) {
+        ProductPurchaseHistoryEntityId productPurchaseHistoryEntityId = new ProductPurchaseHistoryEntityId();
+        productPurchaseHistoryEntityId.setOrganizationId(Objects.requireNonNull(SecurityUtil.getPrincipal()).getOrgId());
+        productPurchaseHistoryEntityId.setProductName(productDto.getProductName().toUpperCase());
+        productPurchaseHistoryEntityId.setSupplierName(productDto.getSupplierName().toUpperCase());
+        productPurchaseHistoryEntityId.setPurchaseDate(productDto.getPurchaseDate());
+        return productPurchaseHistoryEntityId;
     }
 
     @Override

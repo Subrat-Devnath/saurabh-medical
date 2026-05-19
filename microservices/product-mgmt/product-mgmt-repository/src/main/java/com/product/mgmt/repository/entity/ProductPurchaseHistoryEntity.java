@@ -9,11 +9,11 @@ import java.io.Serializable;
 
 
 @Data
-@Table("product_purchace_history")
-public class ProductPurchaceHistoryEntity implements Serializable {
+@Table("product_purchase_history")
+public class ProductPurchaseHistoryEntity implements Serializable {
 
     @PrimaryKey
-    private ProductPurchaceHistoryEntityId productPurchaceHistoryEntityId;
+    private ProductPurchaseHistoryEntityId productPurchaseHistoryEntityId;
 
     @Column("list_price")
     private Long listPrice;
@@ -39,8 +39,8 @@ public class ProductPurchaceHistoryEntity implements Serializable {
     @Column("sold_quantity")
     private Long soldQuantity;
 
-    @Column("supplier_name")
-    private String supplierName;
+    @Column("purchase_date")
+    private Long purchaseDate;
 
     /// --------- Base entity fields ---------
     @Column("is_deleted")

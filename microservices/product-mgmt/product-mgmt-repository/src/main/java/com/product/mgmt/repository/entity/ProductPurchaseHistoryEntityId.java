@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Data
 @PrimaryKeyClass
-public class ProductPurchaceHistoryEntityId implements Serializable {
+public class ProductPurchaseHistoryEntityId implements Serializable {
 
     @PrimaryKeyColumn(name = "organization_id", type = PrimaryKeyType.PARTITIONED)
     private String organizationId;
@@ -18,7 +18,10 @@ public class ProductPurchaceHistoryEntityId implements Serializable {
     @PrimaryKeyColumn(name = "product_name", type = PrimaryKeyType.PARTITIONED)
     private String productName;
 
-    @PrimaryKeyColumn(name = "purchase_date", ordinal = 0, ordering = Ordering.DESCENDING, type = PrimaryKeyType.CLUSTERED)
+    @PrimaryKeyColumn(name = "supplier_name", ordinal = 0, ordering = Ordering.DESCENDING, type = PrimaryKeyType.CLUSTERED)
+    private String supplierName;
+
+    @PrimaryKeyColumn(name = "purchase_date", ordinal = 1, ordering = Ordering.DESCENDING, type = PrimaryKeyType.CLUSTERED)
     private Long purchaseDate;
 }
 
