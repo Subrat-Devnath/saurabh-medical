@@ -53,4 +53,10 @@ public class ProductController {
         return productService.getProductsByOrganizationId(SecurityUtil.getPrincipal().getOrgId(), paginationCriteria.getPageSize(), paginationCriteria.getPageState());
     }
 
+    @PostMapping(path = "/search-products-with-pagination", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ProductPageResponse searchProductsWithPagination(@RequestParam String productName,
+                                                            @RequestBody PaginationCriteria paginationCriteria) {
+        return productService.searchProductWithPagination(SecurityUtil.getPrincipal().getOrgId(), productName, paginationCriteria.getPageSize(), paginationCriteria.getPageState());
+    }
+
 }

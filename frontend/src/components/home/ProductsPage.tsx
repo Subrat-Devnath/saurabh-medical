@@ -93,7 +93,11 @@ function ProductsPage() {
     };
 
     // ---------------- SEARCH PRODUCT ----------------
-    const searchProduct = async (name: string) => {
+    const searchProduct = async (
+        name: string,
+        nextState: string | null = null,
+        isNext: boolean = true
+    ) => {
 
         try {
 
@@ -103,12 +107,17 @@ function ProductsPage() {
             const token = localStorage.getItem("accessToken");
 
             const response = await fetch(
-                `${API}/products/${name}`,
+                `${API}/search-products-with-pagination?productName=${encodeURIComponent(name)}`,
                 {
-                    method: "GET",
+                    method: "POST",
                     headers: {
+                        "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
+                    body: JSON.stringify({
+                        pageSize: pageSize,
+                        pageState: nextState,
+                    }),
                 }
             );
 
@@ -116,9 +125,21 @@ function ProductsPage() {
                 throw new Error("Search failed");
             }
 
-            const data = await response.json();
+            const data: ProductPageResponse = await response.json();
 
-            setProducts(Array.isArray(data) ? data : []);
+            // populate grid
+            setProducts(data.products || []);
+
+            // next page state
+            setPageState(data.nextPageState);
+
+            // next button control
+            setHasNext(data.hasNext);
+
+            // prev history
+            if (isNext && nextState) {
+                setPageStateStack((prev) => [...prev, nextState]);
+            }
 
         } catch (err: any) {
 

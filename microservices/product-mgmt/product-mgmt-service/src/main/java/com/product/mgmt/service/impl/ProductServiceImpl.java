@@ -91,4 +91,9 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.getProductsByOrganizationId(organizationId, pageSize, pageState);
     }
 
+    @Override
+    public ProductPageResponse searchProductWithPagination(String organizationId, String productName, Integer pageSize, String pageState) {
+        return productRepository.searchProductWithPagination(organizationId, productName, pageSize, pageState);
+    }
+
 }

@@ -19,4 +19,6 @@ public interface ProductRepository {
     List<ProductDTO> getAllProducts();
 
     ProductPageResponse getProductsByOrganizationId(String organizationId, Integer pageSize, String pageState);
+
+    ProductPageResponse searchProductWithPagination(String organizationId, String productName, Integer pageSize, String pageState);
 }

@@ -120,7 +120,7 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
     @Override
     public ProductPageResponse getProductsByOrganizationId(String organizationId, Integer pageSize, String pageState) {
 
-        CassandraPageRequest pageRequest = (StringUtils.isEmpty(pageState) ? CassandraPageRequest.first(pageSize) : CassandraPageRequest.of(
+        CassandraPageRequest pageRequest = (!StringUtils.hasLength(pageState) ? CassandraPageRequest.first(pageSize) : CassandraPageRequest.of(
                 PageRequest.of(0, pageSize),
                 ByteBuffer.wrap(
                         Base64.getDecoder().decode(pageState)
@@ -159,6 +159,73 @@ public class ProductRepositoryServiceImpl implements ProductRepository {
 
         CassandraPageRequest nextPageable =
                 (CassandraPageRequest) allProducts.nextPageable();
+
+        ByteBuffer nextPagingState =
+                nextPageable.getPagingState();
+
+        if (nextPagingState == null) {
+            response.setHasNext(false);
+            return response;
+        }
+
+        byte[] bytes = new byte[nextPagingState.remaining()];
+
+        nextPagingState.duplicate().get(bytes);
+
+        response.setNextPageState(Base64.getEncoder().encodeToString(bytes));
+
+        response.setHasNext(true);
+
+        return response;
+    }
+
+    @Override
+    public ProductPageResponse searchProductWithPagination(String organizationId, String productName, Integer pageSize, String pageState) {
+
+        if (!StringUtils.hasLength(productName)) {
+            return new ProductPageResponse(Collections.emptyList(), null, false);
+        }
+
+        String start = productName.toUpperCase();
+        String end = start + Character.MAX_VALUE;
+
+        CassandraPageRequest pageRequest = (!StringUtils.hasLength(pageState) ? CassandraPageRequest.first(pageSize) : CassandraPageRequest.of(
+                PageRequest.of(0, pageSize),
+                ByteBuffer.wrap(
+                        Base64.getDecoder().decode(pageState)
+                )));
+
+        Slice<ProductEntity> searchResults = productDao.searchProductsWithPagination(organizationId, start, end, pageRequest);
+
+        ProductPageResponse response = new ProductPageResponse();
+
+        if (searchResults == null || !searchResults.hasContent()) {
+            response.setProducts(Collections.emptyList());
+            response.setHasNext(false);
+            return response;
+        }
+
+        List<ProductDTO> products = searchResults.stream()
+                .filter(entity -> !entity.isDeleted())
+                .map(entity ->
+                        ObjectBuilder.buildDtoFromEntity(
+                                entity,
+                                entity.getProductEntityId(),
+                                ProductDTO.class
+                        )
+                )
+                .collect(Collectors.toList());
+
+        response.setProducts(products);
+
+        // Next page not present
+        if (!searchResults.hasNext()) {
+            response.setHasNext(false);
+            return response;
+        }
+
+        CassandraPageRequest nextPageable =
+                (CassandraPageRequest) searchResults.nextPageable();
 
         ByteBuffer nextPagingState =
                 nextPageable.getPagingState();
