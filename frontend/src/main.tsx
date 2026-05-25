@@ -7,11 +7,10 @@ import './index.css'
 import RootLayout from "./pages/RootLayout.tsx"
 
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import App from './App.tsx'
+
 import Login from './pages/Login.tsx'
 import Signup from './pages/Signup.tsx'
-import Services from './pages/Services.tsx'
-import About from './pages/About.tsx'
+
 import FuturisticMedicalDashboard from './components/home/FuturisticMedicalDashboard.tsx'
 import ForgotPassword from './pages/ForgotPassword.tsx'
 import ProductsPage from './components/home/ProductsPage.tsx'
@@ -32,8 +31,6 @@ createRoot(document.getElementById('root')!).render(
       {/* PROTECTED (ALL PAGES SHARE PROFILE) */}
       <Route element={<RootLayout />}>
         <Route path="/home" element={<FuturisticMedicalDashboard />} />
-        <Route path="services" element={<Services />} />
-        <Route path="about" element={<About />} />
         <Route path="products" element={<ProductsPage />} />
         <Route path="purchase-history/:productName" element={<PurchaseHistoryPage />} />
       </Route>

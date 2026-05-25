@@ -12,6 +12,10 @@ function Login() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const API = `${BASE_URL}/security/api/v1`;
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -19,7 +23,7 @@ function Login() {
         setError("");
 
         try {
-            const response = await fetch("http://localhost:8079/security/api/v1/login", {
+            const response = await fetch(`${API}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

@@ -32,9 +32,9 @@ function ProductsPage() {
     const [totalQuantity, setTotalQuantity] = useState("");
 
     // pricing
-    const [listPrice, setListPrice] = useState(""); // MRP
-    const [buyPrice, setBuyPrice] = useState("");
-    const [sellPrice, setSellPrice] = useState("");
+    const [unitListPrice, setUnitListPrice] = useState("");
+    const [unitBuyPrice, setUnitBuyPrice] = useState("");
+    const [unitSellPrice, setUnitSellPrice] = useState("");
 
     // dates
     const [purchaseDate, setPurchaseDate] = useState("");
@@ -48,9 +48,13 @@ function ProductsPage() {
 
     const [hasNext, setHasNext] = useState(false);
 
+    const [isSearchMode, setIsSearchMode] = useState(false);
+
     const pageSize = 5;
 
-    const API = "http://127.0.0.1:8079/product-mgmt/api/v1";
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const API = `${BASE_URL}/product-mgmt/api/v1`;
 
     const navigate = useNavigate();
 
@@ -168,9 +172,9 @@ function ProductsPage() {
 
         setTotalQuantity("");
 
-        setListPrice("");
-        setBuyPrice("");
-        setSellPrice("");
+        setUnitListPrice("");
+        setUnitBuyPrice("");
+        setUnitSellPrice("");
 
         setPurchaseDate("");
         setExpiryDate("");
@@ -211,10 +215,9 @@ function ProductsPage() {
                 soldQuantity: 0,
 
                 // pricing
-                listPrice: Number(listPrice), // MRP
-                buyPrice: Number(buyPrice),
-                sellPrice: Number(sellPrice),
-
+                unitListPrice: Number(unitListPrice),
+                unitBuyPrice: Number(unitBuyPrice),
+                unitSellPrice: Number(unitSellPrice),
 
                 purchaseDate: purchaseEpoch,
                 expiryDate: expiryEpoch,
@@ -258,13 +261,19 @@ function ProductsPage() {
         setPageState(null);
         setPageStateStack([]);
 
-        if (searchText.trim() === "") {
+        const trimmedSearch = searchText.trim();
+
+        if (trimmedSearch === "") {
+
+            setIsSearchMode(false);
 
             fetchProducts(null, false);
 
         } else {
 
-            searchProduct(searchText, null, false);
+            setIsSearchMode(true);
+
+            searchProduct(trimmedSearch, null, false);
         }
     };
 
@@ -280,13 +289,13 @@ function ProductsPage() {
             return;
         }
 
-        if (searchText.trim() === "") {
+        if (isSearchMode) {
 
-            fetchProducts(pageState, true);
+            searchProduct(searchText, pageState, true);
 
         } else {
 
-            searchProduct(searchText, pageState, true);
+            fetchProducts(pageState, true);
         }
     };
 
@@ -304,13 +313,13 @@ function ProductsPage() {
 
         setPageStateStack(stack);
 
-        if (searchText.trim() === "") {
+        if (isSearchMode) {
 
-            fetchProducts(prevState, false);
+            searchProduct(searchText, prevState, false);
 
         } else {
 
-            searchProduct(searchText, prevState, false);
+            fetchProducts(prevState, false);
         }
     };
 
@@ -430,6 +439,7 @@ function ProductsPage() {
                 ))}
 
             </div>
+
             {/* PAGINATION */}
             <div className="flex justify-center gap-4 mt-8">
 
@@ -493,30 +503,30 @@ function ProductsPage() {
                                 className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
                             />
 
-                            {/* MRP */}
+                            {/* UNIT LIST PRICE */}
                             <input
                                 type="number"
-                                placeholder="MRP / List Price"
-                                value={listPrice}
-                                onChange={(e) => setListPrice(e.target.value)}
+                                placeholder="Unit List Price"
+                                value={unitListPrice}
+                                onChange={(e) => setUnitListPrice(e.target.value)}
                                 className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
                             />
 
-                            {/* BUY PRICE */}
+                            {/* UNIT BUY PRICE */}
                             <input
                                 type="number"
-                                placeholder="Buy Price"
-                                value={buyPrice}
-                                onChange={(e) => setBuyPrice(e.target.value)}
+                                placeholder="Unit Buy Price"
+                                value={unitBuyPrice}
+                                onChange={(e) => setUnitBuyPrice(e.target.value)}
                                 className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
                             />
 
-                            {/* SELL PRICE */}
+                            {/* UNIT SELL PRICE */}
                             <input
                                 type="number"
-                                placeholder="Sell Price"
-                                value={sellPrice}
-                                onChange={(e) => setSellPrice(e.target.value)}
+                                placeholder="Unit Sell Price"
+                                value={unitSellPrice}
+                                onChange={(e) => setUnitSellPrice(e.target.value)}
                                 className="px-4 py-2 rounded-xl bg-white/5 border border-white/10"
                             />
 

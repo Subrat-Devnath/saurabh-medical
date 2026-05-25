@@ -24,7 +24,9 @@ function ForgotPassword() {
 
     const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-    const API = "http://127.0.0.1:8079/user-mgmt/api/v1";
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const API = `${BASE_URL}/user-mgmt/api/v1`;
 
     const showToast = (type: "success" | "error", message: string) => {
         setToast({ type, message });
