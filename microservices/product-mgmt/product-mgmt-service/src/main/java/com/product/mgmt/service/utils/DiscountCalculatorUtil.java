@@ -11,7 +11,7 @@ public class DiscountCalculatorUtil {
      * Formula: buyDiscount = listPrice - buyPrice
      *
      * @param listPrice the list price of the product
-     * @param buyPrice the buying price of the product
+     * @param buyPrice  the buying price of the product
      * @return the calculated buy discount amount, or null if data is missing or invalid
      */
     public static Double calculateBuyDiscount(Double listPrice, Double buyPrice) {
@@ -65,7 +65,7 @@ public class DiscountCalculatorUtil {
      * Formula: buyDiscountPercentage = ((listPrice - buyPrice) / listPrice) * 100
      *
      * @param listPrice the list price of the product
-     * @param buyPrice the buying price of the product
+     * @param buyPrice  the buying price of the product
      * @return the calculated buy discount percentage, or 0.0 if data is missing or invalid
      */
     public static Double calculateBuyDiscountPercentage(Double listPrice, Double buyPrice) {
@@ -84,7 +84,8 @@ public class DiscountCalculatorUtil {
             return 0.0;
         }
 
-        return ((double) (listPrice - buyPrice) / listPrice) * 100;
+        return Math.round((((double) (listPrice - buyPrice) / listPrice) * 100) * 100.0)
+                / 100.0;
     }
 
     /**
@@ -111,7 +112,73 @@ public class DiscountCalculatorUtil {
             return 0.0;
         }
 
-        return ((double) (listPrice - sellPrice) / listPrice) * 100;
+        return Math.round((((double) (listPrice - sellPrice) / listPrice) * 100) * 100.0)
+                / 100.0;
+    }
+
+    /**
+     * Calculate total list price based on unit list price and quantity
+     * Formula: unitListPrice * quantity
+     *
+     * @param unitListPrice the unit list price of the product
+     * @param quantity      the quantity of the product
+     * @return the calculated total list price, or 0.0 if data is missing or invalid
+     */
+    public static Double calculateTotalListPrice(Double unitListPrice, Long quantity) {
+        // Return 0.0 if any required data is missing
+        if (unitListPrice == null || quantity == null) {
+            return 0.0;
+        }
+
+        // Return 0.0 if price or quantity is negative
+        if (unitListPrice < 0 || quantity < 0) {
+            return 0.0;
+        }
+
+        return unitListPrice * quantity;
+    }
+
+    /**
+     * Calculate total sell price based on unit sell price and quantity
+     * Formula: unitSellPrice * quantity
+     *
+     * @param unitSellPrice the unit sell price of the product
+     * @param quantity      the quantity of the product
+     * @return the calculated total sell price, or 0.0 if data is missing or invalid
+     */
+    public static Double calculateTotalSellPrice(Double unitSellPrice, Long quantity) {
+        // Return 0.0 if any required data is missing
+        if (unitSellPrice == null || quantity == null) {
+            return 0.0;
+        }
+
+        // Return 0.0 if price or quantity is negative
+        if (unitSellPrice < 0 || quantity < 0) {
+            return 0.0;
+        }
+
+        return unitSellPrice * quantity;
+    }
+
+    /**
+     * Calculate total buy price based on unit buy price and quantity
+     * Formula: unitBuyPrice * quantity
+     *
+     * @param unitBuyPrice the unit buy price of the product
+     * @param quantity     the quantity of the product
+     * @return the calculated total buy price, or 0.0 if data is missing or invalid
+     */
+    public static Double calculateTotalBuyPrice(Double unitBuyPrice, Long quantity) {
+        // Return 0.0 if any required data is missing
+        if (unitBuyPrice == null || quantity == null) {
+            return 0.0;
+        }
+
+        // Return 0.0 if price or quantity is negative
+        if (unitBuyPrice < 0 || quantity < 0) {
+            return 0.0;
+        }
+
+        return unitBuyPrice * quantity;
     }
 }
-

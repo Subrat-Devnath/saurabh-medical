@@ -2,7 +2,7 @@
 
 bash build-services.sh
 
-services=("api-gateway" "service-registry" "user-mgmt" "product-mgmt")
+services=("api-gateway" "service-registry" "user-mgmt" "product-mgmt" "security" "email")
 
 #services=''
 

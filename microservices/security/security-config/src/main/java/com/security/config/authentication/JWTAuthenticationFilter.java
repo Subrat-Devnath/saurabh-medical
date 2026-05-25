@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.security.client.dtos.SourceIdentity;
 import com.security.config.utils.SecurityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +27,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
+
+
     @Autowired
     private JwtService jwtService;
 
@@ -32,7 +37,13 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
+        String contentType = request.getContentType();
+
         String header = request.getHeader("Authorization");
+
+        logger.info("Incoming request: method={}, uri={}, Content-Type={} header: {}", method, uri, contentType, header);
 
         if (header == null || !header.startsWith("Bearer")) {
 

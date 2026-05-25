@@ -30,15 +30,19 @@ eureka:
 
 user:
   contextPath: "/user-mgmt"
-  url: "http://127.0.0.1:8081"
+  url: "http://user-mgmt:8081"
 
 product:
   contextPath: "/product-mgmt"
-  url: "http://127.0.0.1:8082"
+  url: "http://product-mgmt:8082"
+
+email:
+  contextPath: "/email"
+  url: "http://email:8085"
 
 security:
   contextPath: "/security"
-  url: "http://127.0.0.1:8084"
+  url: "http://security:8084"
 
 ## ----------- SECURITY PROPERTIES -------
   jwt: 

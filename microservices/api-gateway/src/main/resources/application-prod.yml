@@ -8,25 +8,73 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user-mgmt
+
+        ###---------- user --------------
+
+        - id: user-mgmt-public-api
+          uri: lb://user-mgmt
+          predicates:
+            - Path=/user-mgmt/api/v1/validate/user,/user-mgmt/api/v1/register-normal-user,/user-mgmt/api/v1/reset-password-with-otp,/user-mgmt/api/v1/send-forgot-password-otp,/user-mgmt/api/v1/verify-otp
+          filters:
+            - PreserveHostHeader
+
+        ###---------- USER AUTH --------------
+
+        - id: user-mgmt-authenticated
           uri: lb://user-mgmt
           predicates:
             - Path=/user-mgmt/api/v1/**
-                        
-        - id: product-mgmt
+          filters:
+            - GlobalAuthHeaderFilter
+            - PreserveHostHeader
+
+        ###---------- PRODUCT --------------
+
+        - id: product-mgmt-authenticated
           uri: lb://product-mgmt
           predicates:
-            - Path=/product-mgmt/api/v1/**      
+            - Path=/product-mgmt/api/v1/**
+          filters:
+            - GlobalAuthHeaderFilter
+            - PreserveHostHeader
 
-        - id: security
+        ###---------- SECURITY PUBLIC --------------
+
+        - id: security-public-api
+          uri: lb://security
+          predicates:
+            - Path=/security/api/v1/login
+          filters:
+            - PreserveHostHeader
+
+        ###---------- SECURITY AUTH --------------
+
+        - id: security-authenticated
           uri: lb://security
           predicates:
             - Path=/security/api/v1/**
+          filters:
+            - GlobalAuthHeaderFilter
+            - PreserveHostHeader
 
-        - id: email
+        ###---------- EMAIL PUBLIC --------------
+
+        - id: email-public-api
+          uri: lb://email
+          predicates:
+            - Path=/email/api/v1/send-email
+          filters:
+            - PreserveHostHeader
+
+        ###---------- EMAIL AUTH --------------
+
+        - id: email-authenticated
           uri: lb://email
           predicates:
             - Path=/email/api/v1/**
+          filters:
+            - GlobalAuthHeaderFilter
+            - PreserveHostHeader
 
       ## For frontend development, allow CORS from localhost:5173 (Vite dev server)
       globalcors:
@@ -49,8 +97,8 @@ eureka:
     register-with-eureka: true       # restister to eureka
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/ 
-      #defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}    
+      #defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
     
   ## ----------- SECURITY PROPERTIES -------
   jwt:

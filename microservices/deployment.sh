@@ -12,7 +12,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}🔨 Building services...${NC}"
-bash build-services.sh
+#bash build-services.sh
 
 echo -e "${YELLOW}🛑 Stopping all running containers...${NC}"
 bash stop-containers.sh

@@ -14,14 +14,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ProductPurchaceHistoryController {
+public class ProductPurchaseHistoryController {
 
     @Autowired
-    private ProductPurchaseHistoryService productPurchaceHistoryService;
+    private ProductPurchaseHistoryService productPurchaseHistoryService;
 
-    @GetMapping(path = "/prices/{productName}")
+    @GetMapping(path = "/purchase-history/{productName}")
     public List<ProductPurchaseHistoryDTO> getProductPurchaseHistory(@PathVariable(name = "productName") String productName) {
-        return productPurchaceHistoryService.getProductPurchaseHistory(productName);
+        return productPurchaseHistoryService.getProductPurchaseHistory(productName);
     }
 
 }

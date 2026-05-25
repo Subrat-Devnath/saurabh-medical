@@ -31,8 +31,11 @@ public class ProductServiceImpl implements ProductService {
         if (productQuantity != null) {
             productDto.setProductQuantity(productDto.getProductQuantity() + productQuantity);
         }
-        productDto.setBuyDiscount(DiscountCalculatorUtil.calculateBuyDiscountPercentage(productDto.getListPrice(), productDto.getBuyPrice()));
-        productDto.setSellDiscount(DiscountCalculatorUtil.calculateSellDiscountPercentage(productDto.getListPrice(), productDto.getSellPrice()));
+        productDto.setUnitBuyDiscount(DiscountCalculatorUtil.calculateBuyDiscountPercentage(productDto.getUnitListPrice(), productDto.getUnitBuyPrice()));
+        productDto.setUnitSellDiscount(DiscountCalculatorUtil.calculateSellDiscountPercentage(productDto.getUnitListPrice(), productDto.getUnitSellPrice()));
+        productDto.setTotalListPrice(DiscountCalculatorUtil.calculateTotalListPrice(productDto.getUnitListPrice(), productDto.getPurchasedQuantity()));
+        productDto.setTotalBuyPrice(DiscountCalculatorUtil.calculateTotalBuyPrice(productDto.getUnitBuyPrice(), productDto.getPurchasedQuantity()));
+        productDto.setTotalSellPrice(DiscountCalculatorUtil.calculateTotalSellPrice(productDto.getUnitSellPrice(), productDto.getPurchasedQuantity()));
         productRepository.addProduct(productDto);
     }
 
