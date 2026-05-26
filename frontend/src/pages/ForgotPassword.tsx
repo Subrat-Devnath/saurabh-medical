@@ -242,7 +242,7 @@ function ForgotPassword() {
                                 type="email"
                                 value={emailId}
                                 readOnly
-                                className="w-full px-4 py-3 rounded-xl bg-black/30 border border-white/10"
+                                className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 outline-none focus:border-cyan-500 transition text-white placeholder:text-gray-500"
                             />
 
                             <input
@@ -250,7 +250,7 @@ function ForgotPassword() {
                                 placeholder="Enter OTP"
                                 value={otp}
                                 onChange={(e) => setOtp(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10"
+                                className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 pr-14 outline-none focus:border-purple-500 transition text-white placeholder:text-gray-500"
                             />
 
                             {/* TIMER */}
