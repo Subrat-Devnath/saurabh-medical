@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { useState, type SetStateAction } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+
 
 import { Eye, EyeOff } from "lucide-react";
 
@@ -143,45 +143,43 @@ function Signup() {
                         <form className="space-y-6" onSubmit={handleSignup}>
 
                             {/* EMAIL */}
-                            <div className="space-y-2">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    Email ID
+                                </label>
 
-                                <Label>Email ID</Label>
-
-                                <Input
+                                <input
                                     type="email"
                                     placeholder="Enter your email"
                                     value={emailId}
-                                    onChange={(e: { target: { value: SetStateAction<string>; }; }) =>
-                                        setEmailId(e.target.value)
-                                    }
-                                    className="bg-black/40 border-white/10 h-12"
+                                    onChange={(e) => setEmailId(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 outline-none focus:border-cyan-500 transition text-white placeholder:text-gray-500"
                                     required
                                 />
-
                             </div>
 
                             {/* PASSWORD */}
-                            <div className="space-y-2">
+                            <div>
 
-                                <Label>Password</Label>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                    Password
+                                </label>
 
                                 <div className="relative">
 
-                                    <Input
+                                    <input
                                         type={showPassword ? "text" : "password"}
                                         placeholder="Enter your password"
                                         value={password}
-                                        onChange={(e: { target: { value: SetStateAction<string>; }; }) =>
-                                            setPassword(e.target.value)
-                                        }
-                                        className="bg-black/40 border-white/10 h-12 pr-12"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 pr-14 outline-none focus:border-purple-500 transition text-white placeholder:text-gray-500"
                                         required
                                     />
 
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyan-400 transition"
                                     >
                                         {showPassword ? (
                                             <EyeOff size={18} />

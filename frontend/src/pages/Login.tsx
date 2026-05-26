@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+import { Eye, EyeOff } from "lucide-react";
 function Login() {
     const navigate = useNavigate();
 
@@ -83,6 +84,7 @@ function Login() {
                     {/* FORM */}
                     <form className="space-y-6" onSubmit={handleLogin}>
 
+                        {/* EMAIL */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                                 Email ID
@@ -94,9 +96,11 @@ function Login() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 outline-none focus:border-cyan-500 transition text-white placeholder:text-gray-500"
+                                required
                             />
                         </div>
 
+                        {/* PASSWORD */}
                         <div>
 
                             <div className="flex items-center justify-between mb-2">
@@ -120,6 +124,7 @@ function Login() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 pr-14 outline-none focus:border-purple-500 transition text-white placeholder:text-gray-500"
+                                    required
                                 />
 
                                 <button
@@ -127,7 +132,11 @@ function Login() {
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyan-400 transition"
                                 >
-                                    {showPassword ? "🙈" : "👁"}
+                                    {showPassword ? (
+                                        <EyeOff size={18} />
+                                    ) : (
+                                        <Eye size={18} />
+                                    )}
                                 </button>
                             </div>
 
