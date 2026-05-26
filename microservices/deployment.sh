@@ -11,16 +11,20 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🔨 Building services...${NC}"
+#echo -e "${BLUE}🔨 Building services...${NC}"
 #bash build-services.sh
 
-echo -e "${YELLOW}🛑 Stopping all running containers...${NC}"
-bash stop-containers.sh
+#echo -e "${YELLOW}🛑 Stopping all running containers...${NC}"
+#bash stop-containers.sh
 
-echo -e "${RED}🧹 Deleting Docker images...${NC}"
-bash delete-images.sh
+#echo -e "${RED}🧹 Deleting Docker images...${NC}"
+#bash delete-images.sh
 
-echo -e "${BLUE}🚀 Starting all containers...${NC}"
-docker compose -f docker-compose.yml up -d
+#echo -e "${BLUE}🚀 Starting all containers...${NC}"
+#docker compose -f docker-compose.yml up -d
+
+echo -e "${YELLOW}🚀 Building images and Starting Containers${NC}"
+
+docker compose up -d --build
 
 echo -e "${GREEN}✅ All steps completed successfully.${NC}"

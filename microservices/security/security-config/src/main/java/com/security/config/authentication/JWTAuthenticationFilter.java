@@ -1,6 +1,7 @@
 package com.security.config.authentication;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -43,21 +44,18 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-        logger.info("Incoming request: method={}, uri={}, Content-Type={} header: {}", method, uri, contentType, header);
+        logger.info("Incoming request: method={}, uri={}, Content-Type={}", method, uri, contentType);
 
-        if (header == null || !header.startsWith("Bearer")) {
-
+        if (header == null) {
             filterChain.doFilter(request, response);
-
             return;
         }
 
-        String token = header.substring(7);
+        String token = header.startsWith("Bearer ") ? header.substring(7) : header;
 
         if (!jwtService.isAccessToken(token)) {
-
+            logger.error("Invalid Access Token");
             filterChain.doFilter(request, response);
-
             return;
         }
 
@@ -66,7 +64,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         SourceIdentity sourceIdentity = SecurityUtil.getSecuredIdentity(payload);
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(sourceIdentity, null,
-                null);
+                Collections.emptyList());
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
@@ -75,8 +73,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             // Final line
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+        logger.info("Authentication Set Successfully");
         filterChain.doFilter(request, response);
-
     }
 
     /*@Override

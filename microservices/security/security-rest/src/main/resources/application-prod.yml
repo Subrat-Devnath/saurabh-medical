@@ -20,7 +20,7 @@ spring:
 
 eureka:
   client:
-    register-with-eureka: true       # restister to eureka
+    register-with-eureka: true       # register to eureka
     fetch-registry: true    
     service-url:
       defaultZone: http://localhost:8761/eureka/ 
@@ -49,7 +49,7 @@ security:
     secret: bXlTdXBlclNlY3VyZUhTNTEyS2V5VGhhdElzQXRMZWFzdDY0Qnl0ZXNMb25nRm9yU2VjdXJlSldUVG9rZW5TaWduaW5nMTIzNDU2
     access-ttl-seconds: 36000 
     refresh-ttl-seconds: 86400
-    issuer: saurabh.com
+    issuer: kamlamedical.com
     access-token-cookie-name: accessToken
     refresh-token-cookie-name: refreshToken
     cookie-secure: true
