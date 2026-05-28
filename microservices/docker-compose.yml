@@ -175,7 +175,7 @@ services:
     build:
       context: ../frontend
       args:
-        VITE_API_BASE_URL: /api
+        VITE_API_BASE_URL: ""
     container_name: frontend-container
     depends_on:
       - api-gateway
