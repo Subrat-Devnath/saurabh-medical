@@ -227,7 +227,7 @@ function ForgotPassword() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-cyan-600 py-3 rounded-xl"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyan-400 transition"
                             >
                                 {loading ? <Loader2 className="animate-spin mx-auto" /> : "Send OTP"}
                             </button>

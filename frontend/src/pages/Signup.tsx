@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 
 import { Card, CardContent } from "@/components/ui/card";
 
-import { Button } from "@/components/ui/button";
 
 
 import { Eye, EyeOff } from "lucide-react";
@@ -25,6 +24,7 @@ function Signup() {
 
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessageForPassword, setErrorMessageForPassword] = useState("");
 
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -36,7 +36,7 @@ function Signup() {
 
         setSuccessMessage("");
         setErrorMessage("");
-
+        setErrorMessageForPassword("");
         try {
 
             setLoading(true);
@@ -209,9 +209,9 @@ function Signup() {
                                             setConfirmPassword(e.target.value);
 
                                             if (password !== e.target.value) {
-                                                setErrorMessage("Password and Re-enter Password do not match");
+                                                setErrorMessageForPassword("Password and Re-enter Password do not match");
                                             } else {
-                                                setErrorMessage("");
+                                                setErrorMessageForPassword("");
                                             }
                                         }}
                                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 pr-14 outline-none focus:border-cyan-500 transition text-white placeholder:text-gray-500"
@@ -233,22 +233,22 @@ function Signup() {
                                 </div>
 
                                 {/* ERROR MESSAGE */}
-                                {errorMessage && (
+                                {errorMessageForPassword && (
                                     <p className="text-red-400 text-sm mt-2">
-                                        {errorMessage}
+                                        {errorMessageForPassword}
                                     </p>
                                 )}
 
                             </div>
 
                             {/* SUBMIT */}
-                            <Button
+                            <button
                                 type="submit"
                                 disabled={loading || password !== confirmPassword}
-                                className="w-full h-12 text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50"
+                                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 transition-all duration-300 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-cyan-500/30 hover:scale-[1.02] disabled:opacity-50"
                             >
                                 {loading ? "Creating Account..." : "Create Account"}
-                            </Button>
+                            </button>
 
                         </form>
 
